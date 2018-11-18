@@ -43,12 +43,11 @@ module.exports = async function(context, myTimer) {
         .limit(1)
         .sort({ timeStamp: -1 })
         .toArray();
-      await getBuildInfo(context, document.version);
       if (
         lastInsertedVersion.length === 0 ||
         lastInsertedVersion[0].version !== versionFileCall.data
       ) {
-        const t = await dbo.collection("fusion").insertOne(document);
+        await dbo.collection("fusion").insertOne(document);
 
         context.log("inserted a new version");
       } else {
