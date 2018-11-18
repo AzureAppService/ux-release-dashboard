@@ -1,0 +1,17 @@
+{
+  "name": "ux-scraper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Travis",
+  "license": "MIT",
+  "dependencies": {
+    "@azure/cosmos": "^2.0.5",
+    "axios": "^0.18.0",
+    "mongodb": "^3.1.10",
+    "mongoose": "^5.3.12"
+  }
+}
