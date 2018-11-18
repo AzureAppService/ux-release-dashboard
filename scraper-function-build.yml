@@ -28,4 +28,4 @@ phases:
       - task: PublishBuildArtifacts@1
         displayName: 'Publish Artifact: dest'
         inputs:
-          ArtifactName: dest
+          ArtifactName: payload.zip
