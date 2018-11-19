@@ -1,7 +1,12 @@
 const { gql, ApolloServer } = require("apollo-server-azure-functions");
-const axios = require('axios');
+const axios = require("axios");
+const { createApolloFetch } = require("apollo-fetch");
 const MongoClient = require("mongodb").MongoClient;
 const url = process.env.MONGO_DB_CONNECTION_STRING;
+
+const fetch = createApolloFetch({
+  uri: "https://api.github.com/graphql"
+});
 
 // Construct a schema, using GraphQL schema language
 const typeDefs = gql`
@@ -49,7 +54,7 @@ const typeDefs = gql`
   type requestedFor {
     displayName: String!
   }
-  
+
   type Query {
     ibizaStages: [Stage]
     getIbizaStage(name: String): Stage
@@ -57,7 +62,6 @@ const typeDefs = gql`
     getFusionLocation(location: String): FusionLocation
   }
 `;
-
 const resolvers = {
   Query: {
     ibizaStages: async () => {
@@ -104,9 +108,11 @@ const resolvers = {
   FusionVersion: {
     azureDevOpsData: async FunctionVersion => {
       const { version } = FunctionVersion;
-      const versionSplit = version.split('.');
-      const v = versionSplit[versionSplit.length-1];
-      const call = await axios.get(`https://azure-functions-ux.visualstudio.com/95c5b65b-c568-42b7-8b23-d8e9640a79dd/_apis/build/builds/${v}`);
+      const versionSplit = version.split(".");
+      const v = versionSplit[versionSplit.length - 1];
+      const call = await axios.get(
+        `https://azure-functions-ux.visualstudio.com/95c5b65b-c568-42b7-8b23-d8e9640a79dd/_apis/build/builds/${v}`
+      );
       const BuildInfo = call.data;
       return {
         id: BuildInfo.id,
@@ -119,9 +125,9 @@ const resolvers = {
         url: BuildInfo.url,
         sourceVersion: BuildInfo.sourceVersion,
         requestedFor: {
-            displayName: BuildInfo.requestedFor.displayName
+          displayName: BuildInfo.requestedFor.displayName
         }
-      }
+      };
     }
   },
   FusionLocation: {
