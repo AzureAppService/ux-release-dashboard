@@ -21,7 +21,7 @@ module.exports = async function(context, myTimer) {
       "france-staging",
       "india-staging",
       "brazil-staging",
-      "australia-staging"
+      "australia-staging",
     ];
     const timeStamp = new Date().toISOString();
     const db = await MongoClient.connect(url);
@@ -31,7 +31,7 @@ module.exports = async function(context, myTimer) {
       const versionFileCall = await axios.get(versionUri);
       const document = {
         name: loc,
-        prod: !loc.includes("staging"),
+        prod: !loc.includes("staging") && !loc.includes("next"),
         version: versionFileCall.data,
         timeStamp
       };
@@ -48,7 +48,6 @@ module.exports = async function(context, myTimer) {
         lastInsertedVersion[0].version !== versionFileCall.data
       ) {
         await dbo.collection("fusion").insertOne(document);
-
         context.log("inserted a new version");
       } else {
         context.log("version already exists");

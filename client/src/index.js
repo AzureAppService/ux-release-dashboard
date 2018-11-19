@@ -11,8 +11,8 @@ import { initializeIcons } from '@uifabric/icons';
 initializeIcons();
 
 const client = new ApolloClient({
-  uri: 'https://uxversions-logger.azurewebsites.net/api/GraphQL'
-   // uri: 'http://localhost:7071/api/GraphQL'
+  //uri: 'https://uxversions-logger.azurewebsites.net/api/GraphQL'
+    uri: 'http://localhost:7071/api/GraphQL'
 });
 
 ReactDOM.render(

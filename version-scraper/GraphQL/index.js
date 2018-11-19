@@ -50,15 +50,14 @@ const typeDefs = gql`
   type requestedFor {
     displayName: String!
   }
-  GitCommit {
-
+  type GitCommit {
+    sha: String!
   }
   type Query {
     ibizaStages: [Stage]
     getIbizaStage(name: String): Stage
-    fusionLocations: [FusionLocation]
+    fusionLocations(prodOnly: Boolean): [FusionLocation]
     getFusionLocation(location: String): FusionLocation
-    buildChanges(branch: String, from: String, to: String): [GitCommit]
   }
 `;
 const resolvers = {
@@ -82,12 +81,16 @@ const resolvers = {
         name
       };
     },
-    fusionLocations: async () => {
+    fusionLocations: async (obj, {prodOnly}) => {
       const db = await MongoClient.connect(url);
       const dbo = db.db("versions");
+      const query = {};
+      if(prodOnly) {
+        query.prod  = true;
+      }
       const all = await dbo
         .collection("fusion")
-        .find()
+        .find(query)
         .toArray();
       if (all.length > 0) {
         return Array.from(new Set(all.map(x => x.name))).map(name => ({

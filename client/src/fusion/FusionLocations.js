@@ -28,7 +28,7 @@ const FusionLocations = () => {
     >
       {({ loading, error, data }) => {
         if (loading) return <p>Loading...</p>;
-        if (error) return console.log(error) && <p>Error :(</p>;
+        if (error) return <p>Error :(</p>;
 
         return (
           <>
@@ -40,7 +40,7 @@ const FusionLocations = () => {
                   <div key={name}>
                      <b>{name}</b> :{" "}
                       <a
-                        href={latestVersion.azureDevOpsData.url}
+                        href={latestVersion.devOpsBuild.url}
                         target="_blank"
                         style={{ marginRight: "10px" }}
                       >
