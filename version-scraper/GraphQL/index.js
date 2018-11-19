@@ -42,6 +42,7 @@ const typeDefs = gql`
     startTime: String!
     finishTime: String!
     url: String!
+    sourceBranch: String!
     sourceVersion: String!
     requestedFor: requestedFor
   }
@@ -49,12 +50,15 @@ const typeDefs = gql`
   type requestedFor {
     displayName: String!
   }
+  GitCommit {
 
+  }
   type Query {
     ibizaStages: [Stage]
     getIbizaStage(name: String): Stage
     fusionLocations: [FusionLocation]
     getFusionLocation(location: String): FusionLocation
+    buildChanges(branch: String, from: String, to: String): [GitCommit]
   }
 `;
 const resolvers = {
@@ -94,9 +98,11 @@ const resolvers = {
       }
       return null;
     },
-    getFusionLocation: async (obj, { name }) => {
+    getFusionLocation: async (obj, {location}) => {
       return {
-        name
+        name: location,
+        url: `functions-${location}.azurewebsites.net`,
+        prod: location.indexOf('Staging') === -1
       };
     }
   },
@@ -118,6 +124,7 @@ const resolvers = {
         startTime: BuildInfo.startTime,
         finishTime: BuildInfo.finishTime,
         url: BuildInfo.url,
+        sourceBranch: BuildInfo.sourceBranch.split('/')[2],
         sourceVersion: BuildInfo.sourceVersion,
         requestedFor: {
           displayName: BuildInfo.requestedFor.displayName
