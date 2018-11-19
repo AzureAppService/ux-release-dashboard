@@ -30,10 +30,10 @@ const typeDefs = gql`
     prod: Boolean!
     version: String!
     timeStamp: String!
-    azureDevOpsData: AzureDevopsData
+    devOpsBuild: DevOpsBuild
   }
 
-  type AzureDevopsData {
+  type DevOpsBuild {
     id: Int!
     buildNumber: String!
     status: String!
@@ -101,7 +101,7 @@ const resolvers = {
     }
   },
   FusionVersion: {
-    azureDevOpsData: async FunctionVersion => {
+    devOpsBuild: async FunctionVersion => {
       const { version } = FunctionVersion;
       const versionSplit = version.split(".");
       const v = versionSplit[versionSplit.length - 1];
