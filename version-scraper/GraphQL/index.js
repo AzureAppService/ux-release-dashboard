@@ -1,12 +1,7 @@
 const { gql, ApolloServer } = require("apollo-server-azure-functions");
 const axios = require("axios");
-const { createApolloFetch } = require("apollo-fetch");
 const MongoClient = require("mongodb").MongoClient;
 const url = process.env.MONGO_DB_CONNECTION_STRING;
-
-const fetch = createApolloFetch({
-  uri: "https://api.github.com/graphql"
-});
 
 // Construct a schema, using GraphQL schema language
 const typeDefs = gql`
