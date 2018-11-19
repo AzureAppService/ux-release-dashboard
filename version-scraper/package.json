@@ -9,7 +9,9 @@
   "author": "Travis",
   "license": "MIT",
   "dependencies": {
+    "apollo-server-azure-functions": "^2.2.2",
     "axios": "^0.18.0",
+    "graphql": "^14.0.2",
     "mongodb": "^3.1.10"
   }
 }
