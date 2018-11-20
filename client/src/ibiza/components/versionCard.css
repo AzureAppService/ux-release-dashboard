@@ -1,16 +1,16 @@
 .fxs-overview-section {
   margin: 12px;
-  box-shadow: 1px 1px 3px 0 rgba(0, 0, 0, 0.15);
+  box-shadow: 0px 0px 3px 0 rgba(0, 0, 0, 0.55);
   display: block;
+  width: 500px;
 }
 
 h1 {
   display: block;
-  margin-block-start: 1.33em;
-  margin-block-end: 1.33em;
-  margin-inline-start: 0px;
-  margin-inline-end: 0px;
+  margin: 20px;
   font-weight: bold;
+  font-size: 14px;
+  text-align: center;
 }
 
 ul {
@@ -26,7 +26,25 @@ ul {
   padding: 0;
 }
 
-.property {
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: center;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 16px;
+  padding-right: 16px
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+
+/* .property {
   display: flex;
   justify-content: space-between;
   padding: 4px 12px;
@@ -37,8 +55,7 @@ ul {
 .property-label {
   display: flex;
   justify-content: center;
-  margin-right: 16px;
-  max-width: 300px;
+  margin-right: 120px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -46,10 +63,19 @@ ul {
 
 .property-value {
   overflow: hidden;
+  margin-right: 120px;
   text-overflow: ellipsis;
   white-space: nowrap;
   display: flex;
   justify-content: center;
   font-weight: bold;
-  max-width: 300px;
 }
+
+.property-history {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: flex;
+  justify-content: center;
+  font-weight: bold;
+} */

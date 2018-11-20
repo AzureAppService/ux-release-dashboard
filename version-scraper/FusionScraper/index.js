@@ -23,20 +23,28 @@ module.exports = async function(context, myTimer) {
       "brazil-staging",
       "australia-staging",
     ];
+    const functionObjs = fusionLocations.map(loc=> ({
+      name: loc,
+      uri: `https://functions-${loc}.azurewebsites.net/api/version`
+    }));
+    functionObjs.push({
+      name: 'next',
+      uri: `https://functions-next.azure.com/api/version`
+    });
     const timeStamp = new Date().toISOString();
     const db = await MongoClient.connect(url);
     const dbo = db.db("versions");
-    const promises = fusionLocations.map(async loc => {
-      const versionUri = `https://functions-${loc}.azurewebsites.net/api/version`;
+    const promises = functionObjs.map(async obj => {
+      const versionUri = obj.uri;
       const versionFileCall = await axios.get(versionUri);
       const document = {
-        name: loc,
-        prod: !loc.includes("staging") && !loc.includes("next"),
+        name: obj.name,
+        prod: !obj.name.includes("staging") && !obj.name.includes("next"),
         version: versionFileCall.data,
         timeStamp
       };
 
-      var query = { name: loc };
+      var query = { name: obj.name };
       const lastInsertedVersion = await dbo
         .collection("fusion")
         .find(query)

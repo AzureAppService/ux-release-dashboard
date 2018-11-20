@@ -1,6 +1,7 @@
 import React from "react";
 import { Query } from "react-apollo";
 import gql from "graphql-tag";
+import VersionCard from "./components/VersionCard";
 
 const IbizaProdStages = ["stage1", "stage2", "stage3", "stage4", "stage5"];
 const IbizaProdToRegion = {
@@ -32,26 +33,27 @@ const ibizaStages = () => {
 
         return (
           <>
-            <h1>Ibiza Production</h1>
-            <div style={{ marginLeft: "20px" }}>
-              {data.ibizaStages
+            <VersionCard
+              header="Ibiza Production"
+              items={data.ibizaStages
                 .filter(x => IbizaProdStages.includes(x.name))
-                .map(({ name, latestVersion }) => (
-                  <div key={name}>
-                    <b>{name}</b> ({IbizaProdToRegion[name]}): {latestVersion.version}
-                  </div>
-                ))}
-            </div>
-            <h1>Ibiza Stages</h1>
-            <div style={{ marginLeft: "20px" }}>
-              {data.ibizaStages
-                .filter(x => !IbizaProdStages.includes(x.name))
-                .map(({ name, latestVersion }) => (
-                  <div key={name}>
-                    <b>{name}</b>: {latestVersion.version}
-                  </div>
-                ))}
-            </div>
+                .map(x => ({
+                  name: `${x.name}`,
+                  loc: IbizaProdToRegion[x.name],
+                  version: x.latestVersion.version,
+                  timeStamp: x.latestVersion.timeStamp
+                }))}
+            />
+            <VersionCard
+            header="Ibiza Dev"
+            items={data.ibizaStages
+              .filter(x => !IbizaProdStages.includes(x.name))
+              .map(x => ({
+                name: x.name,
+                version: x.latestVersion.version,
+                timeStamp: x.latestVersion.timeStamp
+              }))}
+          />
           </>
         );
       }}
