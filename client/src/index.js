@@ -10,8 +10,8 @@ import { initializeIcons } from "@uifabric/icons";
 initializeIcons();
 
 const client = new ApolloClient({
-  //uri: 'https://uxversions-logger.azurewebsites.net/api/GraphQL'
-  uri: "http://localhost:4000/graphql"
+  uri: 'https://graphqlserver.azurewebsites.net/graphql'
+  //uri: "http://localhost:4000/graphql"
 });
 
 ReactDOM.render(
