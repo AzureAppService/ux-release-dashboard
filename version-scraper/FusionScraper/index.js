@@ -25,7 +25,7 @@ module.exports = async function(context, myTimer) {
     ];
     const functionObjs = fusionLocations.map(loc=> ({
       name: loc,
-      prod: obj.name.includes("staging"),
+      prod: loc.includes("staging"),
       environment: 'public',
       uri: `https://functions-${loc}.azurewebsites.net/api/version`
     }));
