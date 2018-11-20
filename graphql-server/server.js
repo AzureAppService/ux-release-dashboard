@@ -210,6 +210,7 @@ function normalizePort(val) {
 }
 
 var port = normalizePort(process.env.PORT || "3000");
+console.log(`PORT: {port}`)
 app.listen({ port }, () =>
   console.log(`🚀 Server ready at http://localhost:${port}${server.graphqlPath}`)
 );
