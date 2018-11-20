@@ -1,0 +1,55 @@
+.fxs-overview-section {
+  margin: 12px;
+  box-shadow: 1px 1px 3px 0 rgba(0, 0, 0, 0.15);
+  display: block;
+}
+
+h1 {
+  display: block;
+  margin-block-start: 1.33em;
+  margin-block-end: 1.33em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  font-weight: bold;
+}
+
+ul {
+  display: block;
+  list-style-type: disc;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  padding-inline-start: 40px;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.property {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 12px;
+  border: 0 solid lightgray;
+  border-top-width: 1px;
+}
+
+.property-label {
+  display: flex;
+  justify-content: center;
+  margin-right: 16px;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.property-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: flex;
+  justify-content: center;
+  font-weight: bold;
+  max-width: 300px;
+}
