@@ -25,11 +25,51 @@ module.exports = async function(context, myTimer) {
     ];
     const functionObjs = fusionLocations.map(loc=> ({
       name: loc,
+      prod: obj.name.includes("staging"),
+      environment: 'public',
       uri: `https://functions-${loc}.azurewebsites.net/api/version`
     }));
     functionObjs.push({
       name: 'next',
+      prod: false,
+      environment: 'public',
       uri: `https://functions-next.azure.com/api/version`
+    });
+    functionObjs.push({
+      name: 'mooncake',
+      prod: true,
+      environment: 'mooncake',
+      uri: `https://functions.ext.azure.cn/api/version`
+    });
+    functionObjs.push({
+      name: 'mooncake-staging',
+      prod: false,
+      environment: 'mooncake',
+      uri: `https://functions-china-east-staging.chinacloudsites.cn/api/version`
+    });
+    functionObjs.push({
+      name: 'fairfax',
+      prod: true,
+      environment: 'fairfax',
+      uri: `https://functions.ext.azure.us/api/version`
+    });
+    functionObjs.push({
+      name: 'fairfax-staging',
+      prod: false,
+      environment: 'fairfax',
+      uri: `https://functions-usgov-iowa-staging.azurewebsites.us/api/version`
+    });
+    functionObjs.push({
+      name: 'blackforest',
+      prod: true,
+      environment: 'blackforest',
+      uri: `https://functions.ext.microsoftazure.de/api/version`
+    });
+    functionObjs.push({
+      name: 'blackforest-staging',
+      prod: false,
+      environment: 'blackforest',
+      uri: `https://functions-germany-central-staging.azurewebsites.de/api/version`
     });
     const timeStamp = new Date().toISOString();
     const db = await MongoClient.connect(url);
@@ -39,7 +79,7 @@ module.exports = async function(context, myTimer) {
       const versionFileCall = await axios.get(versionUri);
       const document = {
         name: obj.name,
-        prod: !obj.name.includes("staging") && !obj.name.includes("next"),
+        prod: obj.prod,
         version: versionFileCall.data,
         timeStamp
       };
