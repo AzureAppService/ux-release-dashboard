@@ -10,7 +10,7 @@ import { initializeIcons } from "@uifabric/icons";
 initializeIcons();
 
 const client = new ApolloClient({
-  uri: 'https://graphqlserver.azurewebsites.net/graphql'
+  uri: 'https://graphqllinux.azurewebsites.net/graphql'
   //uri: "http://localhost:4000/graphql"
 });
 
