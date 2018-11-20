@@ -1,9 +1,9 @@
 const express = require("express");
-const http = require('http')
+const http = require("http");
 const { ApolloServer, gql } = require("apollo-server-express");
 const axios = require("axios");
 const MongoClient = require("mongodb").MongoClient;
-const url = process.env.MONGO_DB_CONNECTION_STRING;
+const url ='mongodb://uxversions:j9dcOxigA89J15Ru7nVXQDWGXv5iHGjlJ0XuJ5ZvA8LjmUwygOW7nh3HNecQj6QNv7YH45OfvXWjqo1DgZYJ2g%3D%3D@uxversions.documents.azure.com:10255/?ssl=true&replicaSet=globaldb';// process.env.MONGO_DB_CONNECTION_STRING;
 // Construct a schema, using GraphQL schema language
 const typeDefs = gql`
   type Stage {
@@ -116,25 +116,60 @@ const resolvers = {
       const { version } = FunctionVersion;
       const versionSplit = version.split(".");
       const v = versionSplit[versionSplit.length - 1];
-      const call = await axios.get(
-        `https://azure-functions-ux.visualstudio.com/95c5b65b-c568-42b7-8b23-d8e9640a79dd/_apis/build/builds/${v}`
-      );
-      const BuildInfo = call.data;
-      return {
-        id: BuildInfo.id,
-        buildNumber: BuildInfo.buildNumber,
-        status: BuildInfo.status,
-        result: BuildInfo.result,
-        queueTime: BuildInfo.queueTime,
-        startTime: BuildInfo.startTime,
-        finishTime: BuildInfo.finishTime,
-        url: BuildInfo.url,
-        sourceBranch: BuildInfo.sourceBranch.split("/")[2],
-        sourceVersion: BuildInfo.sourceVersion,
-        requestedFor: {
-          displayName: BuildInfo.requestedFor.displayName
+      try {
+        const call = await axios.get(
+          `https://azure-functions-ux.visualstudio.com/95c5b65b-c568-42b7-8b23-d8e9640a79dd/_apis/build/builds/${v}`
+        );
+        const BuildInfo = call.data;
+        if (call.status === 200) {
+          return {
+            id: BuildInfo.id,
+            buildNumber: BuildInfo.buildNumber,
+            status: BuildInfo.status,
+            result: BuildInfo.result,
+            queueTime: BuildInfo.queueTime,
+            startTime: BuildInfo.startTime,
+            finishTime: BuildInfo.finishTime,
+            url: BuildInfo.url,
+            sourceBranch: BuildInfo.sourceBranch.split("/")[2],
+            sourceVersion: BuildInfo.sourceVersion,
+            requestedFor: {
+              displayName: BuildInfo.requestedFor.displayName
+            }
+          };
         }
-      };
+        return {
+          id: "",
+          buildNumber: "",
+          status: "",
+          result: "",
+          queueTime: "",
+          startTime: "",
+          finishTime: "",
+          url: "",
+          sourceBranch: "",
+          sourceVersion: "",
+          requestedFor: {
+            displayName: ""
+          }
+        };
+      } catch(err) {
+        return {
+          id: "",
+          buildNumber: "",
+          status: "",
+          result: "",
+          queueTime: "",
+          startTime: "",
+          finishTime: "",
+          url: "",
+          sourceBranch: "",
+          sourceVersion: "",
+          requestedFor: {
+            displayName: ""
+          }
+        };
+      }
     }
   },
   FusionLocation: {
@@ -210,7 +245,7 @@ function normalizePort(val) {
   return false;
 }
 
-var port = normalizePort(process.env.PORT || '3000');
-app.set('port', port);
+var port = normalizePort(process.env.PORT || "3000");
+app.set("port", port);
 var httpServer = http.createServer(app);
 httpServer.listen(port);
