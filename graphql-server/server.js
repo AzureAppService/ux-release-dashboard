@@ -1,4 +1,5 @@
 const express = require("express");
+const http = require('http')
 const { ApolloServer, gql } = require("apollo-server-express");
 const axios = require("axios");
 const MongoClient = require("mongodb").MongoClient;
@@ -209,8 +210,7 @@ function normalizePort(val) {
   return false;
 }
 
-var port = normalizePort(process.env.PORT || "3000");
-console.log(`PORT: {port}`)
-app.listen({ port }, () =>
-  console.log(`🚀 Server ready at http://localhost:${port}${server.graphqlPath}`)
-);
+var port = normalizePort(process.env.PORT || '3000');
+app.set('port', port);
+var httpServer = http.createServer(app);
+httpServer.listen(port);
