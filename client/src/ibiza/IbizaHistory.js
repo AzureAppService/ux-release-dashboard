@@ -6,7 +6,7 @@ import { Icon } from "office-ui-fabric-react/lib/Icon";
 import dayjs from "dayjs";
 import { Breadcrumb } from "office-ui-fabric-react/lib/Breadcrumb";
 import { navigate } from "@reach/router";
-
+import LoadingPage from '../LoadingPage';
 export default function FusionHistory(props) {
   const onNavHome = () => {
     navigate("/");
@@ -36,7 +36,7 @@ export default function FusionHistory(props) {
       `}
       >
         {({ loading, error, data }) => {
-          if (loading) return <p>Loading...</p>;
+          if (loading) return <LoadingPage />;
           if (error) return <p>Error :(</p>;
           const versionHistory = data.getIbizaStage.versionHistory;
 
