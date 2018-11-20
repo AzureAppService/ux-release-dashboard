@@ -3,7 +3,7 @@ import { Query } from "react-apollo";
 import gql from "graphql-tag";
 import { Timeline, TimelineEvent } from "react-event-timeline";
 import { Icon } from "office-ui-fabric-react/lib/Icon";
-import dayjs from "dayjs";
+import moment from 'moment-es6';
 import { Breadcrumb } from "office-ui-fabric-react/lib/Breadcrumb";
 import { navigate } from "@reach/router";
 import LoadingPage from '../LoadingPage';
@@ -47,11 +47,7 @@ export default function FusionHistory(props) {
                   titleStyle={{ fontWeight: "bold", fontSize: "14px" }}
                   createdAtStyle={{ fontWeight: "bold", fontSize: "14px" }}
                   title={`Version: ${version.version}`}
-                  createdAt={dayjs(
-                    new Date(version.timeStamp).toLocaleString("en-US", {
-                      timeZone: "America/New_York"
-                    })
-                  ).format("YYYY-MM-DD HH:mm:ss")}
+                  createdAt={moment.utc(version.timeStamp).local().format('YYY-MM-DD hh:mm a')}
                   icon={<Icon iconName="vstslogo" />}
                 />
               ))}

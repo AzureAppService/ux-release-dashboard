@@ -9,6 +9,7 @@
     "dayjs": "^1.7.7",
     "graphql": "14.0.2",
     "graphql-tag": "^2.10.0",
+    "moment-es6": "^1.0.0",
     "office-ui-fabric-react": "^6.105.0",
     "react": "^16.6.3",
     "react-apollo": "^2.3.1",

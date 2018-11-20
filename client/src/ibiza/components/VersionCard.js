@@ -2,7 +2,7 @@ import React from "react";
 import { ActionButton } from "office-ui-fabric-react/lib/Button";
 import { navigate } from "@reach/router";
 import "./versionCard.css";
-import dayjs from "dayjs";
+import moment from "moment-es6";
 
 export default function Fusion(props) {
   const { header, items } = props;
@@ -28,11 +28,10 @@ export default function Fusion(props) {
               <td>{!!item.loc ? `${item.name} (${item.loc})` : item.name}</td>
               <td>{item.version}</td>
               <td>
-                {dayjs(
-                  new Date(item.timeStamp).toLocaleString("en-US", {
-                    timeZone: "America/New_York"
-                  })
-                ).format("YYYY-MM-DD HH:mm:ss")}
+                {moment
+                  .utc(item.timeStamp)
+                  .local()
+                  .format("YYYY-MM-DD hh:mm a")}
               </td>
               <td>
                 <ActionButton
