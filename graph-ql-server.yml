@@ -28,5 +28,5 @@ phases:
       - task: PublishBuildArtifacts@1
         displayName: 'Publish Artifact: dest'
         inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)/payload.zip'
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)/payload.zip'
           ArtifactName: payload
