@@ -29,3 +29,5 @@ phases:
         displayName: 'Publish Artifact: dest'
         inputs:
           ArtifactName: payload.zip
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)/payload.zip'
+
