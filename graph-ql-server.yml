@@ -1,0 +1,31 @@
+# run the same job on 2 CI machines in parallel
+# https://docs.microsoft.com/en-us/vsts/pipelines/process/phases
+phases:
+  - phase: Test
+    queue: 'Hosted macOS'
+    steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: '8.x'
+        displayName: 'Install Node.js'
+
+      - bash: |
+          cd graphql-server
+          npm install
+        displayName: 'NPM Install'
+
+      - script: |
+          cd graphql-server
+          zip -r payload.zip .
+        displayName: 'zip function conects'
+
+      - task: CopyFiles@2
+        displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
+        inputs:
+          SourceFolder: graphql-server
+          TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+      - task: PublishBuildArtifacts@1
+        displayName: 'Publish Artifact: dest'
+        inputs:
+          ArtifactName: payload
