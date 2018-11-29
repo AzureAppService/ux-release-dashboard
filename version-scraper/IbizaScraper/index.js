@@ -17,7 +17,7 @@ module.exports = async function(context, myTimer) {
     }));
   const db = await MongoClient.connect(url);
   try {
-    const dbo = db.db("versions");
+    const dbo = db.db("versions2");
     const p = versionFile.map(async v => {
       var query = { name: v.name };
       const lastInsertedVersion = await dbo
