@@ -8,6 +8,7 @@ import { ActionButton } from "office-ui-fabric-react/lib/Button";
 import { Breadcrumb } from "office-ui-fabric-react/lib/Breadcrumb";
 import { navigate } from "@reach/router";
 import LoadingPage from "../LoadingPage";
+import Header from "./components/Header";
 export default function FusionHistory(props) {
   const onBuildClick = buildNumber => {
     const versionSplit = buildNumber.split(".");
@@ -28,15 +29,10 @@ export default function FusionHistory(props) {
   };
   return (
     <>
-      <Breadcrumb
-        styles={{
-          root: { borderBottom: "1px solid black", paddingBottom: "5px" }
-        }}
-        items={[
-          { text: "Home", key: "f1", onClick: onNavHome },
-          { text: `${props.loc} history`, key: "f2" }
-        ]}
-      />
+      <Header pathItems={[
+        { text: "Home", key: "f1", onClick: onNavHome },
+        { text: `${props.loc} history`, key: "f2" }
+      ]} />
       <Query
         query={gql`
         {
