@@ -8,58 +8,31 @@ module.exports = async function(context, myTimer) {
       const call = await axios.get(
         `https://api.github.com/repos/azure/azure-functions-ux/compare/${commitId1}...${commitId2}`
       );
-      const BuildInfo = call.data;
       if (call.status === 200) {
+        const {
+          ahead_by,
+          commits,
+          diff_url,
+          files,
+          html_url,
+          permalink_url,
+          status,
+          total_commits
+        } = call.data;
         return {
-          id: BuildInfo.id,
-          buildNumber: BuildInfo.buildNumber,
-          status: BuildInfo.status,
-          result: BuildInfo.result,
-          queueTime: BuildInfo.queueTime,
-          startTime: BuildInfo.startTime,
-          finishTime: BuildInfo.finishTime,
-          url: BuildInfo.url,
-          sourceBranch: BuildInfo.sourceBranch.split("/")[2],
-          sourceVersion: BuildInfo.sourceVersion,
-          requestedFor: {
-            displayName: BuildInfo.requestedFor.displayName
-          },
-          deploymentRegion: FunctionVersion.name
+          ahead_by,
+          commits,
+          diff_url,
+          files,
+          html_url,
+          permalink_url,
+          status,
+          total_commits
         };
       }
-      return {
-        id: "",
-        buildNumber: "",
-        status: "",
-        result: "",
-        queueTime: "",
-        startTime: "",
-        finishTime: "",
-        url: "",
-        sourceBranch: "",
-        sourceVersion: "",
-        requestedFor: {
-          displayName: ""
-        },
-        deploymentRegion: ""
-      };
+      return null;
     } catch (err) {
-      return {
-        id: "",
-        buildNumber: "",
-        status: "",
-        result: "",
-        queueTime: "",
-        startTime: "",
-        finishTime: "",
-        url: "",
-        sourceBranch: "",
-        sourceVersion: "",
-        requestedFor: {
-          displayName: ""
-        },
-        deploymentRegion: ""
-      };
+      return null;
     }
   };
 
@@ -85,8 +58,7 @@ module.exports = async function(context, myTimer) {
           sourceVersion: BuildInfo.sourceVersion,
           requestedFor: {
             displayName: BuildInfo.requestedFor.displayName
-          },
-          deploymentRegion: FunctionVersion.name
+          }
         };
       }
       return {
@@ -207,27 +179,32 @@ module.exports = async function(context, myTimer) {
         lastVersion: null,
         githubCommitData: null
       };
-
-      var query = { name: obj.name };
-      const lastInsertedVersion = await dbo
-        .collection("fusion")
-        .find(query)
-        .limit(1)
-        .sort({ timeStamp: -1 })
-        .toArray();
-      if (
-        lastInsertedVersion.length === 0 ||
-        lastInsertedVersion[0].version !== versionFileCall.data
-      ) {
-        if (lastInsertedVersion.length !== 0) {
-          document.lastVersion = lastInsertedVersion[0].version;
-          const githubCommitData = await getGithubSinceLast(lastInsertedVersion.devOpsData.sourceVersion,devOpsData.sourceVersion);
-          document.githubCommitData = githubCommitData.data;
+      try {
+        var query = { name: obj.name };
+        const lastInsertedVersion = await dbo
+          .collection("fusion")
+          .find(query)
+          .limit(1)
+          .sort({ timeStamp: -1 })
+          .toArray();
+        if (
+          lastInsertedVersion.length === 0 ||
+          lastInsertedVersion[0].version !== versionFileCall.data
+        ) {
+          if (lastInsertedVersion.length !== 0) {
+            document.lastVersion = lastInsertedVersion[0].version;
+            const githubCommitData = await getGithubSinceLast(
+              lastInsertedVersion[0].devOpsData.sourceVersion,
+              devOpsData.sourceVersion
+            );
+            document.githubCommitData = githubCommitData;
+          }
+          await dbo.collection("fusion").insertOne(document);
+          context.log("inserted a new version");
         }
-        await dbo.collection("fusion").insertOne(document);
-        context.log("inserted a new version");
-      } else {
-        context.log("version already exists");
+      } catch (err) {
+        context.log(err);
+        context.log(obj.name);
       }
     });
 
