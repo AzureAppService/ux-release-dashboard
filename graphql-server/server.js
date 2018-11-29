@@ -46,14 +46,18 @@ const typeDefs = gql`
     sourceBranch: String!
     sourceVersion: String!
     requestedFor: requestedFor
+    commitsDiff: [GitCommit]
+    deploymentRegion: String!
   }
 
   type requestedFor {
     displayName: String!
   }
+
   type GitCommit {
     sha: String!
   }
+
   type Query {
     ibizaStages: [Stage]
     getIbizaStage(name: String): Stage
@@ -111,6 +115,11 @@ const resolvers = {
       };
     }
   },
+  DevOpsBuild: {
+    commitsDiff: async DevOpsBuild => {
+      return [{sha: DevOpsBuild.deploymentRegion}]
+    }
+  },
   FusionVersion: {
     devOpsBuild: async FunctionVersion => {
       const { version } = FunctionVersion;
@@ -135,7 +144,8 @@ const resolvers = {
             sourceVersion: BuildInfo.sourceVersion,
             requestedFor: {
               displayName: BuildInfo.requestedFor.displayName
-            }
+            },
+            deploymentRegion: FunctionVersion.name
           };
         }
         return {
@@ -151,7 +161,8 @@ const resolvers = {
           sourceVersion: "",
           requestedFor: {
             displayName: ""
-          }
+          },
+          deploymentRegion: ''
         };
       } catch(err) {
         return {
@@ -167,7 +178,8 @@ const resolvers = {
           sourceVersion: "",
           requestedFor: {
             displayName: ""
-          }
+          },
+          deploymentRegion: ""
         };
       }
     }
