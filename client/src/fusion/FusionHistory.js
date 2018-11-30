@@ -8,7 +8,6 @@ import { ActionButton } from "office-ui-fabric-react/lib/Button";
 import { Breadcrumb } from "office-ui-fabric-react/lib/Breadcrumb";
 import { navigate } from "@reach/router";
 import LoadingPage from "../LoadingPage";
-import Header from "./components/Header";
 export default function FusionHistory(props) {
   const onBuildClick = buildNumber => {
     const versionSplit = buildNumber.split(".");
@@ -18,9 +17,9 @@ export default function FusionHistory(props) {
       "_blank"
     );
   };
-  const onCommitClick = commit => {
+  const onCommitClick = url => {
     window.open(
-      `https://github.com/Azure/azure-functions-ux/commit/${commit}`,
+      url,
       "_blank"
     );
   };
@@ -29,10 +28,15 @@ export default function FusionHistory(props) {
   };
   return (
     <>
-      <Header pathItems={[
-        { text: "Home", key: "f1", onClick: onNavHome },
-        { text: `${props.loc} history`, key: "f2" }
-      ]} />
+      <Breadcrumb
+        styles={{
+          root: { borderBottom: "1px solid black", paddingBottom: "5px" }
+        }}
+        items={[
+          { text: "Home", key: "f1", onClick: onNavHome },
+          { text: `${props.loc} history`, key: "f2" }
+        ]}
+      />
       <Query
         query={gql`
         {
@@ -41,7 +45,22 @@ export default function FusionHistory(props) {
             versionHistory {
               version
               timeStamp
-              devOpsBuild {
+              githubCommitData {
+        permalink_url
+        total_commits
+        files{
+          filename
+        }
+        commits {
+          commit {
+            author {
+              name
+            }
+            message
+          }
+        }
+      }
+              devOpsData {
                 sourceVersion
                 requestedFor {
                   displayName
@@ -64,20 +83,35 @@ export default function FusionHistory(props) {
                   titleStyle={{ fontWeight: "bold", fontSize: "14px" }}
                   createdAtStyle={{ fontWeight: "bold", fontSize: "14px" }}
                   title={`Version: ${version.version}`}
-                  createdAt={moment.utc(version.timeStamp).local().format('YYYY-MM-DD hh:mm a')}
+                  createdAt={moment
+                    .utc(version.timeStamp)
+                    .local()
+                    .format("YYYY-MM-DD hh:mm a")}
                   icon={<Icon iconName="vstslogo" />}
                 >
+                  {version.githubCommitData && (
+                    <div style={{borderBottom: '1px solid black'}}>
+                      <h3 >Commits: </h3>
+                      <ul style={{fontSize:"1rem"}}>
+                        {version.githubCommitData.commits.map(commit => (
+                          <li>
+                            <a>{`'${commit.commit.message}' by ${commit.commit.author.name}`}</a>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                   <p>
-                    requested by {version.devOpsBuild.requestedFor.displayName}
+                    build requested by {version.devOpsData.requestedFor.displayName}
                   </p>
                   <ActionButton
                     iconProps={{ iconName: "link" }}
                     allowDisabledFocus={true}
                     onClick={() =>
-                      onCommitClick(version.devOpsBuild.sourceVersion)
+                      onCommitClick(version.githubCommitData.permalink_url)
                     }
                   >
-                    Go To Last Commit
+                    See changes from last release
                   </ActionButton>
                   <ActionButton
                     iconProps={{ iconName: "link" }}

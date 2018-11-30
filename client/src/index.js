@@ -11,7 +11,7 @@ initializeIcons();
 
 const client = new ApolloClient({
   uri: 'https://graphqllinux.azurewebsites.net/graphql'
-  //uri: "http://localhost:4000/graphql"
+  //uri: "http://localhost:3000/graphql"
 });
 
 ReactDOM.render(

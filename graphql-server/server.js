@@ -3,7 +3,8 @@ const http = require("http");
 const { ApolloServer, gql } = require("apollo-server-express");
 const axios = require("axios");
 const MongoClient = require("mongodb").MongoClient;
-const url ='mongodb://uxversions:j9dcOxigA89J15Ru7nVXQDWGXv5iHGjlJ0XuJ5ZvA8LjmUwygOW7nh3HNecQj6QNv7YH45OfvXWjqo1DgZYJ2g%3D%3D@uxversions.documents.azure.com:10255/?ssl=true&replicaSet=globaldb';// process.env.MONGO_DB_CONNECTION_STRING;
+const url =
+  "mongodb://uxversions:j9dcOxigA89J15Ru7nVXQDWGXv5iHGjlJ0XuJ5ZvA8LjmUwygOW7nh3HNecQj6QNv7YH45OfvXWjqo1DgZYJ2g%3D%3D@uxversions.documents.azure.com:10255/?ssl=true&replicaSet=globaldb"; // process.env.MONGO_DB_CONNECTION_STRING;
 // Construct a schema, using GraphQL schema language
 const typeDefs = gql`
   type Stage {
@@ -31,7 +32,8 @@ const typeDefs = gql`
     prod: Boolean!
     version: String!
     timeStamp: String!
-    devOpsBuild: DevOpsBuild
+    devOpsData: DevOpsBuild
+    githubCommitData: GitCommitDiff
   }
 
   type DevOpsBuild {
@@ -46,16 +48,56 @@ const typeDefs = gql`
     sourceBranch: String!
     sourceVersion: String!
     requestedFor: requestedFor
-    commitsDiff: [GitCommit]
-    deploymentRegion: String!
   }
 
   type requestedFor {
     displayName: String!
   }
 
-  type GitCommit {
-    sha: String!
+  type File {
+    sha: String
+    filename: String
+    status: String
+    additions: Int
+    deletions: Int
+    changes: Int
+  }
+  type CommitPerson {
+    name: String
+    email: String
+    date: String
+  }
+  type CommitData {
+    author: CommitPerson
+    commiter: CommitPerson
+    message: String
+    url: String
+  }
+  type CommitAuthor {
+    login: String
+    avatar_url: String
+    url: String
+  }
+  type Commit {
+    sha: String
+    node_id: String
+    commit: CommitData
+    url: String
+    html_url: String
+    comments_url: String
+    author: CommitAuthor
+    commiter: CommitAuthor
+  }
+
+  type GitCommitDiff {
+    ahead_by: Int
+    commits: [Commit]
+    diff_url: String
+    files: [File]
+    html_url: String
+    permalink_url: String
+    status: String
+    total_commits: Int
   }
 
   type Query {
@@ -89,7 +131,7 @@ const resolvers = {
     },
     fusionLocations: async (obj, { prodOnly }) => {
       const db = await MongoClient.connect(url);
-      const dbo = db.db("versions");
+      const dbo = db.db("versions2");
       const query = {};
       if (prodOnly) {
         query.prod = true;
@@ -115,79 +157,10 @@ const resolvers = {
       };
     }
   },
-  DevOpsBuild: {
-    commitsDiff: async DevOpsBuild => {
-      return [{sha: DevOpsBuild.deploymentRegion}]
-    }
-  },
-  FusionVersion: {
-    devOpsBuild: async FunctionVersion => {
-      const { version } = FunctionVersion;
-      const versionSplit = version.split(".");
-      const v = versionSplit[versionSplit.length - 1];
-      try {
-        const call = await axios.get(
-          `https://azure-functions-ux.visualstudio.com/95c5b65b-c568-42b7-8b23-d8e9640a79dd/_apis/build/builds/${v}`
-        );
-        const BuildInfo = call.data;
-        if (call.status === 200) {
-          return {
-            id: BuildInfo.id,
-            buildNumber: BuildInfo.buildNumber,
-            status: BuildInfo.status,
-            result: BuildInfo.result,
-            queueTime: BuildInfo.queueTime,
-            startTime: BuildInfo.startTime,
-            finishTime: BuildInfo.finishTime,
-            url: BuildInfo.url,
-            sourceBranch: BuildInfo.sourceBranch.split("/")[2],
-            sourceVersion: BuildInfo.sourceVersion,
-            requestedFor: {
-              displayName: BuildInfo.requestedFor.displayName
-            },
-            deploymentRegion: FunctionVersion.name
-          };
-        }
-        return {
-          id: "",
-          buildNumber: "",
-          status: "",
-          result: "",
-          queueTime: "",
-          startTime: "",
-          finishTime: "",
-          url: "",
-          sourceBranch: "",
-          sourceVersion: "",
-          requestedFor: {
-            displayName: ""
-          },
-          deploymentRegion: ''
-        };
-      } catch(err) {
-        return {
-          id: "",
-          buildNumber: "",
-          status: "",
-          result: "",
-          queueTime: "",
-          startTime: "",
-          finishTime: "",
-          url: "",
-          sourceBranch: "",
-          sourceVersion: "",
-          requestedFor: {
-            displayName: ""
-          },
-          deploymentRegion: ""
-        };
-      }
-    }
-  },
   FusionLocation: {
     latestVersion: async location => {
       const db = await MongoClient.connect(url);
-      const dbo = db.db("versions");
+      const dbo = db.db("versions2");
       const all = await dbo
         .collection("fusion")
         .find({ name: location.name })
@@ -200,7 +173,7 @@ const resolvers = {
     },
     versionHistory: async location => {
       const db = await MongoClient.connect(url);
-      const dbo = db.db("versions");
+      const dbo = db.db("versions2");
       const all = await dbo
         .collection("fusion")
         .find({ name: location.name })
