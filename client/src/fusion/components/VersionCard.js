@@ -27,14 +27,21 @@ export default function Fusion(props) {
             <th>Version</th>
             <th>Release Date</th>
             <th>History</th>
-            <th>Build</th>
           </tr>
         </thead>
         <tbody>
           {items.map(item => (
             <tr>
               <td>{item.name}</td>
-              <td>{item.version}</td>
+              <td>
+                <ActionButton
+                  iconProps={{ iconName: "link" }}
+                  allowDisabledFocus={true}
+                  onClick={() => onBuildClick(item.version)}
+                >
+                  {item.version}
+                </ActionButton>
+              </td>
               <td>
                 {moment
                   .utc(item.timeStamp)
@@ -48,15 +55,6 @@ export default function Fusion(props) {
                   onClick={() => onHistoryClick(item.name)}
                 >
                   Open
-                </ActionButton>
-              </td>
-              <td>
-                <ActionButton
-                  iconProps={{ iconName: "link" }}
-                  allowDisabledFocus={true}
-                  onClick={() => onBuildClick(item.version)}
-                >
-                  Go
                 </ActionButton>
               </td>
             </tr>
