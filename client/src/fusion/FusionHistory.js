@@ -18,10 +18,7 @@ export default function FusionHistory(props) {
     );
   };
   const onCommitClick = url => {
-    window.open(
-      url,
-      "_blank"
-    );
+    window.open(url, "_blank");
   };
   const onNavHome = () => {
     navigate("/");
@@ -40,18 +37,19 @@ export default function FusionHistory(props) {
       <Query
         query={gql`
         {
-          getFusionLocation(location: "${props.loc}") {
-            name
-            versionHistory {
-              version
-              timeStamp
-              githubCommitData {
+  getFusionLocation(location: "${props.loc}") {
+    name
+    versionHistory {
+      version
+      timeStamp
+      githubCommitData {
         permalink_url
         total_commits
-        files{
+        files {
           filename
         }
         commits {
+          sha
           commit {
             author {
               name
@@ -60,15 +58,15 @@ export default function FusionHistory(props) {
           }
         }
       }
-              devOpsData {
-                sourceVersion
-                requestedFor {
-                  displayName
-                }
-              }
-            }
-          }
+      devOpsData {
+        sourceVersion
+        requestedFor {
+          displayName
         }
+      }
+    }
+  }
+}
       `}
       >
         {({ loading, error, data }) => {
@@ -90,20 +88,33 @@ export default function FusionHistory(props) {
                   icon={<Icon iconName="vstslogo" />}
                 >
                   {version.githubCommitData && (
-                    <div style={{borderBottom: '1px solid black'}}>
-                      <h3 >Commits: </h3>
-                      <ul style={{fontSize:"1rem"}}>
+                    <div>
+                      <h3 style={{ marginBottom: "5px" }}>Commits: </h3>
+                      <ul
+                        style={{
+                          fontSize: ".8rem",
+                          marginLeft: "20px",
+                          listStyleType: "square"
+                        }}
+                      >
                         {version.githubCommitData.commits.map(commit => (
                           <li>
-                            <a>{`'${commit.commit.message}' by ${commit.commit.author.name}`}</a>
+                            {`'${commit.commit.message}' by ${
+                              commit.commit.author.name
+                            }`}{" "}
+                            |{" "}
+                            <a
+                              href={`https://github.com/azure/azure-functions-ux/commit/${
+                                commit.sha
+                              }`} target="_blank"
+                            >
+                              {commit.sha}
+                            </a>
                           </li>
                         ))}
                       </ul>
                     </div>
                   )}
-                  <p>
-                    build requested by {version.devOpsData.requestedFor.displayName}
-                  </p>
                   <ActionButton
                     iconProps={{ iconName: "link" }}
                     allowDisabledFocus={true}
