@@ -3,8 +3,8 @@ const http = require("http");
 const { ApolloServer, gql } = require("apollo-server-express");
 const axios = require("axios");
 const MongoClient = require("mongodb").MongoClient;
-const url =
-  "mongodb://uxversions:j9dcOxigA89J15Ru7nVXQDWGXv5iHGjlJ0XuJ5ZvA8LjmUwygOW7nh3HNecQj6QNv7YH45OfvXWjqo1DgZYJ2g%3D%3D@uxversions.documents.azure.com:10255/?ssl=true&replicaSet=globaldb"; // process.env.MONGO_DB_CONNECTION_STRING;
+const url = process.env.MONGO_DB_CONNECTION_STRING;
+  
 // Construct a schema, using GraphQL schema language
 const typeDefs = gql`
   type Stage {
