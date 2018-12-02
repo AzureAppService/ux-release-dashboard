@@ -117,7 +117,7 @@ module.exports = async function(context, myTimer) {
     ];
     const functionObjs = fusionLocations.map(loc => ({
       name: loc,
-      prod: loc.includes("staging"),
+      prod: !loc.includes("staging"),
       environment: "public",
       uri: `https://functions-${loc}.azurewebsites.net/api/version`
     }));
@@ -179,6 +179,17 @@ module.exports = async function(context, myTimer) {
         lastVersion: null,
         githubCommitData: null
       };
+      const isNewerVersion = (lastVersion, newVersion) => {
+        const lastVersionSplit = lastVersion.split(".");
+        const newVersionSplit = newVersion.split(".");
+        const lastVersionBuildNumber = +lastVersionSplit[
+          lastVersionSplit.length - 1
+        ];
+        const newVersionBuildNumber = +newVersionSplit[
+          newVersionSplit.length - 1
+        ];
+        return newVersionBuildNumber > lastVersionBuildNumber;
+      };
       try {
         var query = { name: obj.name };
         const lastInsertedVersion = await dbo
@@ -193,11 +204,17 @@ module.exports = async function(context, myTimer) {
         ) {
           if (lastInsertedVersion.length !== 0) {
             document.lastVersion = lastInsertedVersion[0].version;
-            const githubCommitData = await getGithubSinceLast(
-              lastInsertedVersion[0].devOpsData.sourceVersion,
-              devOpsData.sourceVersion
+            const vcompare = QVersion.version_compare(
+              document.lastVersion,
+              document.version
             );
-            document.githubCommitData = githubCommitData;
+            if (isNewerVersion(document.lastVersion, document.version)) {
+              const githubCommitData = await getGithubSinceLast(
+                lastInsertedVersion[0].devOpsData.sourceVersion,
+                devOpsData.sourceVersion
+              );
+              document.githubCommitData = githubCommitData;
+            }
           }
           await dbo.collection("fusion").insertOne(document);
           context.log("inserted a new version");
