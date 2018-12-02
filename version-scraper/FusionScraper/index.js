@@ -204,10 +204,7 @@ module.exports = async function(context, myTimer) {
         ) {
           if (lastInsertedVersion.length !== 0) {
             document.lastVersion = lastInsertedVersion[0].version;
-            const vcompare = QVersion.version_compare(
-              document.lastVersion,
-              document.version
-            );
+  
             if (isNewerVersion(document.lastVersion, document.version)) {
               const githubCommitData = await getGithubSinceLast(
                 lastInsertedVersion[0].devOpsData.sourceVersion,
