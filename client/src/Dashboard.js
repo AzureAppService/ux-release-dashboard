@@ -27,7 +27,7 @@ export default function Dashboard() {
           }
         }
       `}
-      pollInterval={500}
+      pollInterval={30000}
     >
       {({ loading, error, data }) => {
         if (loading) return <LoadingPage />;
