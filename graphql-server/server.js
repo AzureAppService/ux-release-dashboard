@@ -3,8 +3,8 @@ const http = require("http");
 const { ApolloServer, gql } = require("apollo-server-express");
 const axios = require("axios");
 const MongoClient = require("mongodb").MongoClient;
-const url = process.env.MONGO_DB_CONNECTION_STRING;
-  
+const url = 'mongodb://uxversions:nFq6JIsqTGv2xnBhsXGWq28a2j5i6pI6xxmcbZoUVsyzlTyd5FkfXXXolVN73RwfUOOzIfa2oLMzJPPfWEwuAQ==@uxversions.documents.azure.com:10255/?ssl=true&replicaSet=globaldb&appname=@West US'//process.env.MONGO_DB_CONNECTION_STRING;
+const dbp = MongoClient.connect(url,{ useNewUrlParser: true });
 // Construct a schema, using GraphQL schema language
 const typeDefs = gql`
   type Stage {
@@ -111,26 +111,44 @@ const typeDefs = gql`
 const resolvers = {
   Query: {
     ibizaStages: async () => {
-      const db = await MongoClient.connect(url);
+      const db = await dbp;
       const dbo = db.db("versions");
       const all = await dbo
         .collection("ibiza")
         .find()
+        .sort({ timeStamp: -1 })
         .toArray();
       if (all.length > 0) {
-        return Array.from(new Set(all.map(x => x.name))).map(name => ({
-          name
-        }));
+        return Array.from(new Set(all.map(x => x.name))).map(name => {
+          const vals = all.filter(x => x.name === name);
+          return {
+            name,
+            latestVersion: vals[0],
+            versionHistory: vals
+          };
+        });
       }
       return null;
     },
     getIbizaStage: async (obj, { name }) => {
+      const db = await dbp;
+      const dbo = db.db("versions");
+      const all = await dbo
+        .collection("ibiza")
+        .find({ name })
+        .sort({ timeStamp: -1 })
+        .toArray();
+      if (all.length === 0) {
+        return null;
+      }
       return {
-        name
+        name,
+        latestVersion: all[0],
+        versionHistory: all
       };
     },
     fusionLocations: async (obj, { prodOnly }) => {
-      const db = await MongoClient.connect(url);
+      const db = await dbp;
       const dbo = db.db("versions2");
       const query = {};
       if (prodOnly) {
@@ -139,77 +157,43 @@ const resolvers = {
       const all = await dbo
         .collection("fusion")
         .find(query)
+        .sort({ timeStamp: -1 })
         .toArray();
       if (all.length > 0) {
-        return Array.from(new Set(all.map(x => x.name))).map(name => ({
-          name,
-          url: `functions-${name}.azurewebsites.net`,
-          prod: all.find(x => x.name === name).prod
-        }));
+        return Array.from(new Set(all.map(x => x.name))).map(name => {
+          const vals = all.filter(x => x.name === name);
+          return {
+            name,
+            url: `functions-${name}.azurewebsites.net`,
+            prod: all.find(x => x.name === name).prod,
+            latestVersion: vals[0],
+            versionHistory: vals
+          };
+        });
       }
       return null;
     },
     getFusionLocation: async (obj, { location }) => {
+      const db = await dbp;
+      const dbo = db.db("versions2");
+      const query = { name: location };
+      const all = await dbo
+        .collection("fusion")
+        .find(query)
+        .sort({ timeStamp: -1 })
+        .toArray();
       return {
         name: location,
         url: `functions-${location}.azurewebsites.net`,
-        prod: location.indexOf("Staging") === -1
+        prod: location.indexOf("Staging") === -1,
+        latestVersion: all[0],
+        versionHistory: all
       };
-    }
-  },
-  FusionLocation: {
-    latestVersion: async location => {
-      const db = await MongoClient.connect(url);
-      const dbo = db.db("versions2");
-      const all = await dbo
-        .collection("fusion")
-        .find({ name: location.name })
-        .sort({ timeStamp: -1 })
-        .toArray();
-      if (all.length > 0) {
-        return all[0];
-      }
-      return null;
-    },
-    versionHistory: async location => {
-      const db = await MongoClient.connect(url);
-      const dbo = db.db("versions2");
-      const all = await dbo
-        .collection("fusion")
-        .find({ name: location.name })
-        .sort({ timeStamp: -1 })
-        .toArray();
-      return all;
-    }
-  },
-  Stage: {
-    latestVersion: async stage => {
-      const db = await MongoClient.connect(url);
-      const dbo = db.db("versions");
-      const all = await dbo
-        .collection("ibiza")
-        .find({ name: stage.name })
-        .sort({ timeStamp: -1 })
-        .toArray();
-      if (all.length > 0) {
-        return all[0];
-      }
-      return null;
-    },
-    versionHistory: async stage => {
-      const db = await MongoClient.connect(url);
-      const dbo = db.db("versions");
-      const all = await dbo
-        .collection("ibiza")
-        .find({ name: stage.name })
-        .sort({ timeStamp: -1 })
-        .toArray();
-      return all;
     }
   }
 };
 
-const server = new ApolloServer({ typeDefs, resolvers, introspection: true });
+const server = new ApolloServer({ typeDefs, resolvers, introspection: true, cacheControl: true, tracing: true });
 
 const app = express();
 server.applyMiddleware({ app });

@@ -99,14 +99,13 @@ export default function FusionHistory(props) {
                       >
                         {version.githubCommitData.commits.map(commit => (
                           <li>
-                            {`'${commit.commit.message}' by <b>${
-                              commit.commit.author.name
-                            }`}</b>{" "}
-                            |{" "}
+                            {commit.commit.message} by{" "}
+                            <b>{commit.commit.author.name}</b>
                             <a
                               href={`https://github.com/azure/azure-functions-ux/commit/${
                                 commit.sha
-                              }`} target="_blank"
+                              }`}
+                              target="_blank"
                             >
                               {commit.sha}
                             </a>
