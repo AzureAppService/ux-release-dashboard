@@ -1,10 +1,13 @@
-const express = require("express");
-const http = require("http");
-const { ApolloServer, gql } = require("apollo-server-express");
-const axios = require("axios");
-const MongoClient = require("mongodb").MongoClient;
+const express = require('express');
+const http = require('http');
+const { ApolloServer, gql } = require('apollo-server-express');
+const axios = require('axios');
+const MongoClient = require('mongodb').MongoClient;
 const url = process.env.MONGO_DB_CONNECTION_STRING;
-const dbp = MongoClient.connect(url,{ useNewUrlParser: true });
+const dbp = MongoClient.connect(
+  url,
+  { useNewUrlParser: true },
+);
 // Construct a schema, using GraphQL schema language
 const typeDefs = gql`
   type Stage {
@@ -112,19 +115,35 @@ const resolvers = {
   Query: {
     ibizaStages: async () => {
       const db = await dbp;
-      const dbo = db.db("versions");
-      const all = await dbo
-        .collection("ibiza")
+      const dbo = db.db('versions');
+      const count = await dbo
+        .collection('ibiza')
         .find()
-        .sort({ timeStamp: -1 })
-        .toArray();
+        .count();
+      allPromises = [];
+      for (let i = 0; i < count / 30; i = i + 1) {
+        allPromises.push(
+          dbo
+            .collection('ibiza')
+            .find()
+            .sort({ timeStamp: -1 })
+            .limit(30)
+            .skip(i * 30)
+            .toArray(),
+        );
+      }
+      allp = await Promise.all(allPromises);
+      let all = [];
+      allp.forEach(a => {
+        all = all.concat(a);
+      });
       if (all.length > 0) {
         return Array.from(new Set(all.map(x => x.name))).map(name => {
           const vals = all.filter(x => x.name === name);
           return {
             name,
             latestVersion: vals[0],
-            versionHistory: vals
+            versionHistory: vals,
           };
         });
       }
@@ -132,33 +151,63 @@ const resolvers = {
     },
     getIbizaStage: async (obj, { name }) => {
       const db = await dbp;
-      const dbo = db.db("versions");
-      const all = await dbo
-        .collection("ibiza")
+      const dbo = db.db('versions');
+      const count = await dbo
+        .collection('ibiza')
         .find({ name })
-        .sort({ timeStamp: -1 })
-        .toArray();
-      if (all.length === 0) {
-        return null;
+        .count();
+      allPromises = [];
+      for (let i = 0; i < count / 30; i = i + 1) {
+        allPromises.push(
+          dbo
+            .collection('ibiza')
+            .find({ name })
+            .sort({ timeStamp: -1 })
+            .limit(30)
+            .skip(i * 30)
+            .toArray(),
+        );
       }
+      allp = await Promise.all(allPromises);
+      let all = [];
+      allp.forEach(a => {
+        all = all.concat(a);
+      });
       return {
         name,
         latestVersion: all[0],
-        versionHistory: all
+        versionHistory: all,
       };
     },
     fusionLocations: async (obj, { prodOnly }) => {
       const db = await dbp;
-      const dbo = db.db("versions2");
+      const dbo = db.db('versions2');
       const query = {};
       if (prodOnly) {
         query.prod = true;
       }
-      const all = await dbo
-        .collection("fusion")
+      const count = await dbo
+        .collection('fusion')
         .find(query)
-        .sort({ timeStamp: -1 })
-        .toArray();
+        .count();
+      allPromises = [];
+      for (let i = 0; i < count / 30; i = i + 1) {
+        allPromises.push(
+          dbo
+            .collection('fusion')
+            .find(query)
+            .sort({ timeStamp: -1 })
+            .limit(30)
+            .skip(i * 30)
+            .toArray(),
+        );
+      }
+      allp = await Promise.all(allPromises);
+      let all = [];
+      allp.forEach(a => {
+        all = all.concat(a);
+      });
+
       if (all.length > 0) {
         return Array.from(new Set(all.map(x => x.name))).map(name => {
           const vals = all.filter(x => x.name === name);
@@ -167,7 +216,7 @@ const resolvers = {
             url: `functions-${name}.azurewebsites.net`,
             prod: all.find(x => x.name === name).prod,
             latestVersion: vals[0],
-            versionHistory: vals
+            versionHistory: vals,
           };
         });
       }
@@ -175,22 +224,38 @@ const resolvers = {
     },
     getFusionLocation: async (obj, { location }) => {
       const db = await dbp;
-      const dbo = db.db("versions2");
+      const dbo = db.db('versions2');
       const query = { name: location };
-      const all = await dbo
-        .collection("fusion")
+      const count = await dbo
+        .collection('fusion')
         .find(query)
-        .sort({ timeStamp: -1 })
-        .toArray();
+        .count();
+      allPromises = [];
+      for (let i = 0; i < count / 30; i = i + 1) {
+        allPromises.push(
+          dbo
+            .collection('fusion')
+            .find(query)
+            .sort({ timeStamp: -1 })
+            .limit(30)
+            .skip(i * 30)
+            .toArray(),
+        );
+      }
+      allp = await Promise.all(allPromises);
+      let all = [];
+      allp.forEach(a => {
+        all = all.concat(a);
+      });
       return {
         name: location,
         url: `functions-${location}.azurewebsites.net`,
-        prod: location.indexOf("Staging") === -1,
+        prod: location.indexOf('Staging') === -1,
         latestVersion: all[0],
-        versionHistory: all
+        versionHistory: all,
       };
-    }
-  }
+    },
+  },
 };
 
 const server = new ApolloServer({ typeDefs, resolvers, introspection: true, cacheControl: true, tracing: true });
@@ -214,7 +279,7 @@ function normalizePort(val) {
   return false;
 }
 
-var port = normalizePort(process.env.PORT || "3000");
-app.set("port", port);
+var port = normalizePort(process.env.PORT || '3000');
+app.set('port', port);
 var httpServer = http.createServer(app);
 httpServer.listen(port);
