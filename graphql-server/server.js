@@ -1,14 +1,98 @@
 const express = require('express');
 const http = require('http');
 const { ApolloServer, gql } = require('apollo-server-express');
-const axios = require('axios');
+
+const {  timer } = require('rxjs');
+const {  concatMap } = require('rxjs/operators');
+
 const MongoClient = require('mongodb').MongoClient;
 const url = process.env.MONGO_DB_CONNECTION_STRING;
+
 const dbp = MongoClient.connect(
   url,
   { useNewUrlParser: true },
 );
+const page_size = 40;
+const source = timer(0, 60000);
+let fusionLocations = [];
+let ibizaStages = [];
+
+source
+  .pipe(
+    concatMap(async _ => {
+      const db = await dbp;
+      const dbo = db.db('versions2');
+      return await dbo
+        .collection('fusion')
+        .find()
+        .count();
+    }),
+    concatMap(async count => {
+      const db = await dbp;
+      const dbo = db.db('versions2');
+      allPromises = [];
+      for (let i = 0; i < count / page_size; i = i + 1) {
+        allPromises.push(
+          dbo
+            .collection('fusion')
+            .find()
+            .sort({ timeStamp: -1 })
+            .limit(page_size)
+            .skip(i * page_size)
+            .toArray(),
+        );
+      }
+      return await Promise.all(allPromises);
+    }),
+  )
+  .subscribe(x => {
+    let t = [];
+    x.forEach(m => {
+      t = t.concat(m);
+    });
+    fusionLocations = t;
+    console.log(fusionLocations.length);
+  });
+
+
+source
+.pipe(
+  concatMap(async _ => {
+    const db = await dbp;
+    const dbo = db.db('versions');
+    return await dbo
+      .collection('ibiza')
+      .find()
+      .count();
+  }),
+  concatMap(async count => {
+    const db = await dbp;
+    const dbo = db.db('versions');
+    allPromises = [];
+    for (let i = 0; i < count / page_size; i = i + 1) {
+      allPromises.push(
+        dbo
+          .collection('ibiza')
+          .find()
+          .sort({ timeStamp: -1 })
+          .limit(page_size)
+          .skip(i * page_size)
+          .toArray(),
+      );
+    }
+    return await Promise.all(allPromises);
+  }),
+)
+.subscribe(x => {
+  let t = [];
+  x.forEach(m => {
+    t = t.concat(m);
+  });
+  ibizaStages = t;
+  console.log(ibizaStages.length);
+});
 // Construct a schema, using GraphQL schema language
+
 const typeDefs = gql`
   type Stage {
     name: String!
@@ -114,29 +198,7 @@ const typeDefs = gql`
 const resolvers = {
   Query: {
     ibizaStages: async () => {
-      const db = await dbp;
-      const dbo = db.db('versions');
-      const count = await dbo
-        .collection('ibiza')
-        .find()
-        .count();
-      allPromises = [];
-      for (let i = 0; i < count / 30; i = i + 1) {
-        allPromises.push(
-          dbo
-            .collection('ibiza')
-            .find()
-            .sort({ timeStamp: -1 })
-            .limit(30)
-            .skip(i * 30)
-            .toArray(),
-        );
-      }
-      allp = await Promise.all(allPromises);
-      let all = [];
-      allp.forEach(a => {
-        all = all.concat(a);
-      });
+      const all = ibizaStages;
       if (all.length > 0) {
         return Array.from(new Set(all.map(x => x.name))).map(name => {
           const vals = all.filter(x => x.name === name);
@@ -150,29 +212,7 @@ const resolvers = {
       return null;
     },
     getIbizaStage: async (obj, { name }) => {
-      const db = await dbp;
-      const dbo = db.db('versions');
-      const count = await dbo
-        .collection('ibiza')
-        .find({ name })
-        .count();
-      allPromises = [];
-      for (let i = 0; i < count / 30; i = i + 1) {
-        allPromises.push(
-          dbo
-            .collection('ibiza')
-            .find({ name })
-            .sort({ timeStamp: -1 })
-            .limit(30)
-            .skip(i * 30)
-            .toArray(),
-        );
-      }
-      allp = await Promise.all(allPromises);
-      let all = [];
-      allp.forEach(a => {
-        all = all.concat(a);
-      });
+      const all = ibizaStages.filter(x=> x.name === name);
       return {
         name,
         latestVersion: all[0],
@@ -180,34 +220,10 @@ const resolvers = {
       };
     },
     fusionLocations: async (obj, { prodOnly }) => {
-      const db = await dbp;
-      const dbo = db.db('versions2');
-      const query = {};
+      let all = fusionLocations;
       if (prodOnly) {
-        query.prod = true;
+        all = fusionLocations.filter(x=> x.prod);
       }
-      const count = await dbo
-        .collection('fusion')
-        .find(query)
-        .count();
-      allPromises = [];
-      for (let i = 0; i < count / 30; i = i + 1) {
-        allPromises.push(
-          dbo
-            .collection('fusion')
-            .find(query)
-            .sort({ timeStamp: -1 })
-            .limit(30)
-            .skip(i * 30)
-            .toArray(),
-        );
-      }
-      allp = await Promise.all(allPromises);
-      let all = [];
-      allp.forEach(a => {
-        all = all.concat(a);
-      });
-
       if (all.length > 0) {
         return Array.from(new Set(all.map(x => x.name))).map(name => {
           const vals = all.filter(x => x.name === name);
@@ -223,30 +239,7 @@ const resolvers = {
       return null;
     },
     getFusionLocation: async (obj, { location }) => {
-      const db = await dbp;
-      const dbo = db.db('versions2');
-      const query = { name: location };
-      const count = await dbo
-        .collection('fusion')
-        .find(query)
-        .count();
-      allPromises = [];
-      for (let i = 0; i < count / 30; i = i + 1) {
-        allPromises.push(
-          dbo
-            .collection('fusion')
-            .find(query)
-            .sort({ timeStamp: -1 })
-            .limit(30)
-            .skip(i * 30)
-            .toArray(),
-        );
-      }
-      allp = await Promise.all(allPromises);
-      let all = [];
-      allp.forEach(a => {
-        all = all.concat(a);
-      });
+      const all = fusionLocations.filter(x=> x.name === location)
       return {
         name: location,
         url: `functions-${location}.azurewebsites.net`,
