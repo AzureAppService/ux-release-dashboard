@@ -9,25 +9,19 @@ module.exports = async function(context, myTimer) {
         `https://api.github.com/repos/azure/azure-functions-ux/compare/${commitId1}...${commitId2}`
       );
       if (call.status === 200) {
-        const {
-          ahead_by,
-          commits,
-          diff_url,
-          files,
-          html_url,
-          permalink_url,
-          status,
-          total_commits
-        } = call.data;
+        const commitsData = call.data.commits.map(x=>{
+          return {
+            sha:x.sha,
+            commit: {
+              author : x.commit.author,
+              committer : x.commit.commiter,
+              message: x.commit.message,
+            },
+          
+          }
+        });
         return {
-          ahead_by,
-          commits,
-          diff_url,
-          files,
-          html_url,
-          permalink_url,
-          status,
-          total_commits
+          commits: commitsData
         };
       }
       return null;
@@ -78,6 +72,7 @@ module.exports = async function(context, myTimer) {
         deploymentRegion: ""
       };
     } catch (err) {
+      console.log(err);
       return {
         id: "",
         buildNumber: "",

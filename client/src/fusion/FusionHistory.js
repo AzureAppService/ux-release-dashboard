@@ -51,11 +51,6 @@ export default function FusionHistory(props) {
       version
       timeStamp
       githubCommitData {
-        permalink_url
-        total_commits
-        files {
-          filename
-        }
         commits {
           sha
           commit {

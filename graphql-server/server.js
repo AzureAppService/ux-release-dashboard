@@ -51,7 +51,7 @@ source
       t = t.concat(m);
     });
     fusionLocations = t;
-    console.log(fusionLocations.length);
+    console.log(JSON.stringify(fusionLocations).length);
   });
 
 
@@ -89,7 +89,7 @@ source
     t = t.concat(m);
   });
   ibizaStages = t;
-  console.log(ibizaStages.length);
+  console.log(JSON.stringify(ibizaStages).length);
 });
 // Construct a schema, using GraphQL schema language
 
