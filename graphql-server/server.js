@@ -23,7 +23,7 @@ source
       const db = await dbp;
       const dbo = db.db('versions2');
       return await dbo
-        .collection('fusion')
+        .collection('fusion2')
         .find()
         .count();
     }),
@@ -34,7 +34,7 @@ source
       for (let i = 0; i < count / page_size; i = i + 1) {
         allPromises.push(
           dbo
-            .collection('fusion')
+            .collection('fusion2')
             .find()
             .sort({ timeStamp: -1 })
             .limit(page_size)

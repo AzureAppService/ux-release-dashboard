@@ -188,7 +188,7 @@ module.exports = async function(context, myTimer) {
       try {
         var query = { name: obj.name };
         const lastInsertedVersion = await dbo
-          .collection("fusion")
+          .collection("fusion2")
           .find(query)
           .limit(1)
           .sort({ timeStamp: -1 })
@@ -208,7 +208,7 @@ module.exports = async function(context, myTimer) {
               document.githubCommitData = githubCommitData;
             }
           }
-          await dbo.collection("fusion").insertOne(document);
+          await dbo.collection("fusion2").insertOne(document);
           context.log("inserted a new version");
         }
       } catch (err) {
