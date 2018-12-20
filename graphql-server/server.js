@@ -167,11 +167,24 @@ const typeDefs = gql`
   }
   type Commit {
     sha: String
+    node_id: String
     commit: CommitData
+    url: String
+    html_url: String
+    comments_url: String
+    author: CommitAuthor
+    commiter: CommitAuthor
   }
 
   type GitCommitDiff {
+    ahead_by: Int
     commits: [Commit]
+    diff_url: String
+    files: [File]
+    html_url: String
+    permalink_url: String
+    status: String
+    total_commits: Int
   }
 
   type Query {
