@@ -9,6 +9,15 @@ import { Breadcrumb } from "office-ui-fabric-react/lib/Breadcrumb";
 import { navigate } from "@reach/router";
 import LoadingPage from "../LoadingPage";
 import { SearchBox } from "office-ui-fabric-react/lib/SearchBox";
+import processString from 'react-process-string';
+
+const config = [{
+  regex: /AB#(\d+)/gim,
+  fn: (key, result) => <span key={key}>
+                           <a target="_blank" href={`https://msazure.visualstudio.com/Antares/_workitems/edit/${result[1]}`}>{result[0]}</a>
+                       </span>
+},];
+
 export default function FusionHistory(props) {
   const [searchTerm, setSearchTerm] = useState(null);
 
@@ -132,7 +141,7 @@ export default function FusionHistory(props) {
                                     : 1
                               }}
                             >
-                              {commit.commit.message} by{" "}
+                              {processString(config)(commit.commit.message)} by{" "}
                               <b>{commit.commit.author.name}</b>
                               <a
                                 href={`https://github.com/azure/azure-functions-ux/commit/${

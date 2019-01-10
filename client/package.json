@@ -15,7 +15,8 @@
     "react-apollo": "^2.3.1",
     "react-dom": "16.7.0-alpha.2",
     "react-event-timeline": "^1.5.4",
-    "react-scripts": "2.1.1"
+    "react-scripts": "2.1.1",
+    "react-process-string": "^1.2.0"
   },
   "scripts": {
     "start": "react-scripts start",
