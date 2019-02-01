@@ -209,6 +209,18 @@ module.exports = async function(context, myTimer) {
             }
           }
           await dbo.collection("fusion2").insertOne(document);
+          const t = await axios({
+            method: 'post',
+            url: process.env.EventWebhookUrl,
+            data: {
+              environment: document.prod ? "prod" : 'state',
+              portal: "fusion",
+              oldVersion: lastInsertedVersion.length === 0 ? '' : lastInsertedVersion[0].version,
+              newVersion: document.version,
+              regions: document.name,
+              link: `https://uxversions.azurefd.net/fusion/history/${document.name}`
+            }
+          })
           context.log("inserted a new version");
         }
       } catch (err) {

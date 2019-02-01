@@ -11,9 +11,9 @@
     "graphql-tag": "^2.10.0",
     "moment-es6": "^1.0.0",
     "office-ui-fabric-react": "^6.105.0",
-    "react": "16.7.0-alpha.2",
+    "react": "16.8.0-alpha.0",
     "react-apollo": "^2.3.1",
-    "react-dom": "16.7.0-alpha.2",
+    "react-dom": "16.8.0-alpha.0",
     "react-event-timeline": "^1.5.4",
     "react-scripts": "2.1.1",
     "react-process-string": "^1.2.0"
