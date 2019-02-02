@@ -50,7 +50,8 @@ module.exports = async function(context, myTimer) {
             portal: "ibiza",
             oldVersion: lastInsertedVersion.length === 0 ? '' : lastInsertedVersion[0].version,
             newVersion: v.version,
-            regions: IbizaProdToRegion[v.name]
+            regions: IbizaProdToRegion[v.name],
+            link: `https://uxversions.azurefd.net`
           }
         })
       }
