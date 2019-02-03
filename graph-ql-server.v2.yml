@@ -6,23 +6,24 @@ phases:
     steps:
       - task: NodeTool@0
         inputs:
-          versionSpec: '8.x'
+          versionSpec: '10.x'
         displayName: 'Install Node.js'
 
       - bash: |
-          cd graphql-server
+          cd server
           npm install
         displayName: 'NPM Install'
 
       - script: |
-          cd graphql-server
+          cd server
+          npm run build
           zip -r payload.zip .
-        displayName: 'zip function conects'
+        displayName: 'zip server'
 
       - task: CopyFiles@2
         displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
         inputs:
-          SourceFolder: graphql-server
+          SourceFolder: server
           TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
       - task: PublishBuildArtifacts@1

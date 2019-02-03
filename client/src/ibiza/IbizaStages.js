@@ -20,7 +20,7 @@ const ibizaStages = props => {
             name: `${x.name}`,
             loc: IbizaProdToRegion[x.name],
             version: x.latestVersion.version,
-            timeStamp: x.latestVersion.timeStamp
+            createdAt: x.latestVersion.createdAt
           }))}
       />
       <VersionCard
@@ -30,7 +30,7 @@ const ibizaStages = props => {
           .map(x => ({
             name: x.name,
             version: x.latestVersion.version,
-            timeStamp: x.latestVersion.timeStamp
+            createdAt: x.latestVersion.createdAt
           }))}
       />
     </>

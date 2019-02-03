@@ -29,7 +29,7 @@ export default function FusionHistory(props) {
             name
             versionHistory {
               version
-              timeStamp
+              createdAt
             }
           }
         }
@@ -47,7 +47,7 @@ export default function FusionHistory(props) {
                   titleStyle={{ fontWeight: "bold", fontSize: "14px" }}
                   createdAtStyle={{ fontWeight: "bold", fontSize: "14px" }}
                   title={`Version: ${version.version}`}
-                  createdAt={moment.utc(version.timeStamp).local().format('YYY-MM-DD hh:mm a')}
+                  createdAt={moment.utc(version.createdAt).local().format('YYY-MM-DD hh:mm a')}
                   icon={<Icon iconName="vstslogo" />}
                 />
               ))}

@@ -12,7 +12,7 @@ const FusionLocations = props => {
           .map(x => ({
             name: x.name,
             version: x.latestVersion.version,
-            timeStamp: x.latestVersion.timeStamp
+            createdAt: x.latestVersion.createdAt
           }))}
       />
       <VersionCard
@@ -22,7 +22,7 @@ const FusionLocations = props => {
           .map(x => ({
             name: x.name,
             version: x.latestVersion.version,
-            timeStamp: x.latestVersion.timeStamp
+            createdAt: x.latestVersion.createdAt
           }))}
       />
     </>

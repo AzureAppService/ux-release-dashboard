@@ -14,7 +14,7 @@ export default function Dashboard() {
             prod
             latestVersion {
               version
-              timeStamp
+              createdAt
             }
           }
           ibizaStages {
@@ -22,7 +22,7 @@ export default function Dashboard() {
             latestVersion {
               name
               version
-              timeStamp
+              createdAt
             }
           }
         }

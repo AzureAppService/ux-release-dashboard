@@ -44,7 +44,7 @@ export default function Fusion(props) {
               </td>
               <td>
                 {moment
-                  .utc(item.timeStamp)
+                  .utc(item.createdAt)
                   .local()
                   .format("YYYY-MM-DD hh:mm a")}
               </td>

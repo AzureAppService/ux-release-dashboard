@@ -1,0 +1,56 @@
+# Write your query or mutation here
+# Write your query or mutation here
+scalar Date
+scalar Time
+scalar DateTime
+type Query {
+  fusionLocations: [FusionLocation]
+  getFusionLocation(location: String): FusionLocation
+}
+
+type FusionLocation {
+    name: String!
+    url: String!
+    prod: Boolean!
+    latestVersion: FusionVersion
+    versionHistory: [FusionVersion]
+}
+
+type FusionVersion {
+    id: Int
+    createdAt: DateTime
+    name: String
+    version: String
+    prod: Boolean
+    lastVersion: String
+    devOpsData: DevOpsData
+    githubCommitData: [GithubCommits]
+  }
+  type DevOpsData {
+  id: Int!
+  buildNumber: String!
+  status: String!
+  result: String!
+  startTime: String!
+  url: String!
+  sourceBranch: String!
+  sourceVersion: String!
+  requestedFor: RequestedFor
+}
+type RequestedFor {
+  displayName: String!
+}
+type GithubCommitAuthor {
+    name: String!
+    email: String!
+    date: String!
+}
+
+type GithubCommitData {
+    author: GithubCommitAuthor!
+    message: String!
+}
+type GithubCommits {
+    sha: String!
+    commit: GithubCommitData
+}

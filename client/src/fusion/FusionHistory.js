@@ -14,7 +14,7 @@ import processString from 'react-process-string';
 const config = [{
   regex: /AB#(\d+)/gim,
   fn: (key, result) => <span key={key}>
-                           <a target="_blank" href={`https://msazure.visualstudio.com/Antares/_workitems/edit/${result[1]}`}>{result[0]}</a>
+                           <a target="_blank" rel="noopener noreferrer" href={`https://msazure.visualstudio.com/Antares/_workitems/edit/${result[1]}`}>{result[0]}</a>
                        </span>
 },];
 
@@ -58,9 +58,8 @@ export default function FusionHistory(props) {
     name
     versionHistory {
       version
-      timeStamp
+      createdAt
       githubCommitData {
-        commits {
           sha
           commit {
             author {
@@ -68,7 +67,7 @@ export default function FusionHistory(props) {
             }
             message
           }
-        }
+        
       }
       devOpsData {
         sourceVersion
@@ -92,10 +91,10 @@ export default function FusionHistory(props) {
                 .filter(x => {
                   if (!searchTerm) return true;
                   if (!x.githubCommitData) return false;
-                  const commitMessages = x.githubCommitData.commits.map(y =>
+                  const commitMessages = x.githubCommitData.map(y =>
                     y.commit.message.toLowerCase()
                   );
-                  const commitAuthors = x.githubCommitData.commits.map(y =>
+                  const commitAuthors = x.githubCommitData.map(y =>
                     y.commit.author.name.toLowerCase()
                   );
                   console.log(commitAuthors, searchTerm);
@@ -106,12 +105,12 @@ export default function FusionHistory(props) {
                 })
                 .map(version => (
                   <TimelineEvent
-                    key={version.timeStamp}
+                    key={version.createdAt}
                     titleStyle={{ fontWeight: "bold", fontSize: "14px" }}
                     createdAtStyle={{ fontWeight: "bold", fontSize: "14px" }}
                     title={`Version: ${version.version}`}
                     createdAt={moment
-                      .utc(version.timeStamp)
+                      .utc(version.createdAt)
                       .local()
                       .format("YYYY-MM-DD hh:mm a")}
                     icon={<Icon iconName="vstslogo" />}
@@ -126,7 +125,7 @@ export default function FusionHistory(props) {
                             listStyleType: "square"
                           }}
                         >
-                          {version.githubCommitData.commits.map(commit => (
+                          {version.githubCommitData.map(commit => (
                             <li
                               style={{
                                 opacity:
@@ -144,6 +143,7 @@ export default function FusionHistory(props) {
                               {processString(config)(commit.commit.message)} by{" "}
                               <b>{commit.commit.author.name}</b>
                               <a
+                                rel="noopener noreferrer"
                                 href={`https://github.com/azure/azure-functions-ux/commit/${
                                   commit.sha
                                 }`}

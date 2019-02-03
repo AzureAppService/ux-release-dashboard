@@ -6,7 +6,7 @@ phases:
     steps:
       - task: NodeTool@0
         inputs:
-          versionSpec: '8.x'
+          versionSpec: '10.x'
         displayName: 'Install Node.js'
 
       - bash: |
@@ -16,6 +16,7 @@ phases:
 
       - script: |
           cd version-scraper
+          npm run compile
           zip -r payload.zip .
         displayName: 'zip function conects'
 
