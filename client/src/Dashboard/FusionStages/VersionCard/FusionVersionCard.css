@@ -2,7 +2,6 @@
   margin: 12px;
   box-shadow: 0px 0px 3px 0 rgba(0, 0, 0, 0.55);
   display: block;
-  width: 500px;
 }
 
 h1 {
@@ -43,39 +42,3 @@ td, th {
 tr:nth-child(even) {
   background-color: #dddddd;
 }
-
-/* .property {
-  display: flex;
-  justify-content: space-between;
-  padding: 4px 12px;
-  border: 0 solid lightgray;
-  border-top-width: 1px;
-}
-
-.property-label {
-  display: flex;
-  justify-content: center;
-  margin-right: 120px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.property-value {
-  overflow: hidden;
-  margin-right: 120px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  display: flex;
-  justify-content: center;
-  font-weight: bold;
-}
-
-.property-history {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  display: flex;
-  justify-content: center;
-  font-weight: bold;
-} */
