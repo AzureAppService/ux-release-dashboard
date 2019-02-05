@@ -6,7 +6,7 @@ import { ReactComponent as Logo } from '../AzureAppService.svg';
 import processString from 'react-process-string';
 import dayjs from 'dayjs';
 import { Button, Divider, Input, InputProps, Table, Image } from 'semantic-ui-react';
-
+import { Ghost } from 'react-kawaii';
 
 const TimelineEventNew = TimelineEvent as any;
 const config = [
@@ -133,10 +133,13 @@ const FusionHistory = (props: { path: string; loc?: string }) => {
                     createdAt={dayjs(version.createdAt).format('YYYY-MM-DD hh:mm a')}
                     icon={<Logo style={{ width: '20px', height: '20px' }} />}
                   >
-                    {version.githubCommitData && (
+                    {version.githubCommitData.length === 0 && (
+                      <div style={{ display: 'flex', width: '100%', justifyItems: 'center', alignItems: 'center'}} ><Ghost size={120} mood="ko" color="#E0E4E8" /><p style={{fontSize:'1rem', paddingLeft: '10px'}}>No commit data for this release</p></div>
+                    )}
+                    {version.githubCommitData.length > 0 && (
                       <div>
                         <h3 style={{ marginBottom: '5px' }}>Commits: </h3>
-                        <Table celled style={{fontSize:'.9rem'}}>
+                        <Table celled style={{ fontSize: '.9rem' }}>
                           <Table.Header>
                             <Table.Row>
                               <Table.HeaderCell>Author</Table.HeaderCell>
