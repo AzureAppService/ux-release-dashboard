@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
-import { Menu, Container } from 'semantic-ui-react';
+import {  Container } from 'semantic-ui-react';
 import Dashboard from './Dashboard/Dashboard';
-import { ReactComponent as Logo } from './AzureAppService.svg';
-import { Router, Link } from '@reach/router';
+
+import { Router } from '@reach/router';
 import FusionHistory from './FusionHistory/FusionHistory';
 import IbizaHistory from './IbizaHistory/IbizaHistory';
 import NavBar from './Components/NavBar';

@@ -6,6 +6,7 @@ import { ReactComponent as Logo } from '../AzureAppService.svg';
 import processString from 'react-process-string';
 import dayjs from 'dayjs';
 import { Button, Divider, Search, SearchProps, Input, InputProps, Table, Label, Tab } from 'semantic-ui-react';
+import { Link } from '@reach/router';
 
 const TimelineEventNew = TimelineEvent as any;
 const config = [
@@ -162,7 +163,7 @@ const FusionHistory = (props: { path: string; loc?: string }) => {
                                 </Table.Cell>
                                 <Table.Cell>{getBugList(commit.commit.message)}</Table.Cell>
                                 <Table.Cell>
-                                  <Button onClick={() => {}}>Open</Button>
+                                  <Button onClick={() => window.open(`https://github.com/azure/azure-functions-ux/commit/${commit.sha}`, '_blank')}>Open</Button>
                                 </Table.Cell>
                               </Table.Row>
                             ))}
