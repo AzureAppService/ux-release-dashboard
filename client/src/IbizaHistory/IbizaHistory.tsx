@@ -38,7 +38,7 @@ const IbizaHistory = (props: { path: string; loc?: string }) => {
                   titleStyle={{ fontWeight: 'bold', fontSize: '14px' }}
                   createdAtStyle={{ fontWeight: 'bold', fontSize: '14px' }}
                   title={`Version: ${version.version}`}
-                  createdAt={dayjs(version.createdAt).format('YYY-MM-DD hh:mm a')}
+                  createdAt={dayjs(version.createdAt).format('YYYY-MM-DD hh:mmA')}
                   icon={<Logo style={{ width: '20px', height: '20px' }} />}
                 />
               ))}
