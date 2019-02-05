@@ -1,34 +1,28 @@
-import { Entity, Column, CreateDateColumn, PrimaryColumn, ManyToMany, Unique, PrimaryGeneratedColumn } from 'typeorm';
+
+import { GithubCommitAuthor } from './github-user.entity';
+import { Column, ManyToOne, Entity, PrimaryColumn, ManyToMany } from 'typeorm';
 import { FusionVersion } from './FusionVersion';
 
-export class GithubCommitAuthor {
-  @Column()
-  name: string;
-  @Column()
-  email: string;
-
-  @Column({ nullable: true })
-  login: string;
-
-  @Column({ nullable: true })
-  // tslint:disable-next-line:variable-name
-  avatar_url: string;
-  @Column()
-  date: string;
-}
+// tslint:disable-next-line:max-classes-per-file
 export class GithubCommitData {
-  @Column(type => GithubCommitAuthor)
-  author: GithubCommitAuthor;
   @Column()
   message: string;
+
+  @ManyToOne(type => GithubCommitAuthor, author => author.githubCommits, {
+    cascade: true,
+    eager: true,
+  })
+  author: GithubCommitAuthor;
+
 }
+// tslint:disable-next-line:max-classes-per-file
 @Entity()
 export class GithubCommit {
   @PrimaryColumn()
   sha: string;
 
   @Column(type => GithubCommitData)
-  commit: GithubCommitData;
+  commit?: GithubCommitData;
 
   @ManyToMany(type => FusionVersion, version => version.githubCommitData)
   versions: FusionVersion[];

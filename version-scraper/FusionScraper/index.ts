@@ -3,6 +3,7 @@ import { FusionVersion } from './entities/FusionVersion';
 import { DevOpsData } from './entities/DevOpsData';
 import { GithubCommit } from './entities/GithubCommits';
 import axios from 'axios';
+import { GithubCommitAuthor } from './entities/github-user.entity';
 
 const fusionLocations = [
   'db3',
@@ -117,10 +118,11 @@ const getGithubSinceLast = async (commitId1, commitId2, retry = 0) => {
     const call = await axios.get(diffUrl);
     if (call.status === 200) {
       const commitsData = call.data.commits.map(x => {
+        console.log(x);
         return {
           sha: x.sha,
           commit: {
-            author: x.commit.author,
+            author: {...x.commit.author, ...x.author},
             committer: x.commit.commiter,
             message: x.commit.message,
           },
@@ -158,7 +160,7 @@ export async function run(context: any, req: any) {
     password: process.env.POSTGRES_PASSWORD,
     database: process.env.POSTGRES_DB,
     ssl: true,
-    entities: [DevOpsData, FusionVersion, GithubCommit],
+    entities: [DevOpsData, FusionVersion, GithubCommit, GithubCommitAuthor],
   });
 
   const promises = functionObjs.map(async obj => {
@@ -193,18 +195,18 @@ export async function run(context: any, req: any) {
       }
       const post = connection.manager.create(FusionVersion, document);
       await connection.manager.save(FusionVersion, post);
-      // await axios({
-      //   method: 'post',
-      //   url: process.env.EventWebhookUrl,
-      //   data: {
-      //     environment: document.prod ? "prod" : 'state',
-      //     portal: "fusion",
-      //     oldVersion: !lastVersion ? '' : lastVersion.version,
-      //     newVersion: document.version,
-      //     regions: document.name,
-      //     link: `https://uxversions.azurefd.net/fusion/history/${document.name}`
-      //   }
-      // })
+      await axios({
+        method: 'post',
+        url: process.env.EventWebhookUrl,
+        data: {
+          environment: document.prod ? "prod" : 'state',
+          portal: "fusion",
+          oldVersion: !lastVersion ? '' : lastVersion.version,
+          newVersion: document.version,
+          regions: document.name,
+          link: `https://uxversions.azurefd.net/fusion/history/${document.name}`
+        }
+      })
     }
   });
   await Promise.all(promises);
