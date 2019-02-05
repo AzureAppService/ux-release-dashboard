@@ -23,6 +23,7 @@ type FusionVersion {
     version: String
     prod: Boolean
     lastVersion: String
+    diffUrl: String
     devOpsData: DevOpsData
     githubCommitData: [GithubCommits]
   }

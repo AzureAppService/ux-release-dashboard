@@ -26,6 +26,7 @@ export class FusionVersion {
     version?: string;
     prod?: boolean;
     lastVersion?: string;
+    diffUrl?: string;
     devOpsData?: DevOpsData;
     githubCommitData?: GithubCommits[];
 }
