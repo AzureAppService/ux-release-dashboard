@@ -6,6 +6,7 @@ import { FusionLocation, Stage } from '../graphql.schema';
 import IbizaStages from './IbizaStages/IbizaStages';
 import { Grid, Tab } from 'semantic-ui-react';
 import FusionLocationsCard from './FusionStages/FusionLocationsCard';
+import { Cat } from 'react-kawaii'
 
 const DashboardQuery = gql`
   {
@@ -55,6 +56,7 @@ const ProdView = (data: QueryDataType) => {
       <Grid stackable columns={2}>
         <Grid.Column>
           <IbizaStages header="Ibiza" ibizaStages={data!.ibizaStages!.filter(x => IbizaProdStages.includes(x.name))} />
+          <Cat size={320} mood="excited" color="#596881" />
         </Grid.Column>
         <Grid.Column>
           <FusionLocationsCard header="Fusion" fusionLocations={data!.fusionLocations!.filter(x => x.prod).sort(sortFunctionFusion)} />
@@ -69,6 +71,7 @@ const StageView = (data: QueryDataType) => {
       <Grid stackable columns={2}>
         <Grid.Column>
           <IbizaStages header="Ibiza" ibizaStages={data!.ibizaStages!.filter(x => !IbizaProdStages.includes(x.name))} />
+          <Cat size={320} mood="blissful" color="#596881" />
         </Grid.Column>
         <Grid.Column>
           <FusionLocationsCard header="Fusion" fusionLocations={data!.fusionLocations!.filter(x => !x.prod).sort(sortFunctionFusion)} />
