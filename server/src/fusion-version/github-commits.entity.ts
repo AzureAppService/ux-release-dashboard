@@ -11,6 +11,14 @@ export class GithubCommitAuthor {
   name: string;
   @Column()
   email: string;
+
+  @Column({nullable: true})
+  login: string;
+
+  @Column({nullable: true})
+  // tslint:disable-next-line:variable-name
+  avatar_url: string;
+
   @Column()
   date: string;
 }

@@ -45,6 +45,8 @@ type GithubCommitAuthor {
     name: String!
     email: String!
     date: String!
+    login: String
+    avatar_url: String
 }
 
 type GithubCommitData {

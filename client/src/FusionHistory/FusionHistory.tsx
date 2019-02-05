@@ -5,12 +5,12 @@ import { Timeline, TimelineEvent } from 'react-event-timeline';
 import { ReactComponent as Logo } from '../AzureAppService.svg';
 import processString from 'react-process-string';
 import dayjs from 'dayjs';
-import { Button, Divider, Search, SearchProps, Input, InputProps } from 'semantic-ui-react';
+import { Button, Divider, Search, SearchProps, Input, InputProps, Table, Label, Tab } from 'semantic-ui-react';
 
 const TimelineEventNew = TimelineEvent as any;
 const config = [
   {
-    regex: /AB#(\d+)/gim,
+    regex: /AB#(\d+)?/gim,
     fn: (key: any, result: any) => (
       <span key={key}>
         <a target="_blank" rel="noopener noreferrer" href={`https://msazure.visualstudio.com/Antares/_workitems/edit/${result[1]}`}>
@@ -20,6 +20,42 @@ const config = [
     ),
   },
 ];
+
+const bulletString = (s: string) => {
+  if (s.includes('*')) {
+    const sp = s.split('*');
+    return (
+      <ul>
+        {sp.map(v => (
+          <li>{processString(config)(v)}</li>
+        ))}
+      </ul>
+    );
+  } else {
+    return <p>{processString(config)(s)}</p>;
+  }
+};
+
+const getBugList = (message: string) => {
+  const bugRegex = /AB#(\d+)/gim;
+
+  if (message.includes('AB#')) {
+    const bugs = message.match(bugRegex);
+    return (
+      <ul>
+        {bugs!.map(v => (
+          <li>
+            <a target="_blank" rel="noopener noreferrer" href={`https://msazure.visualstudio.com/Antares/_workitems/edit/${v.split('#')[1]}`}>
+              {v.replace('AB', '')}
+            </a>
+          </li>
+        ))}
+      </ul>
+    );
+  } else {
+    return <p>No Bugs</p>;
+  }
+};
 const FusionHistory = (props: { path: string; loc?: string }) => {
   const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined);
 
@@ -38,8 +74,8 @@ const FusionHistory = (props: { path: string; loc?: string }) => {
     <>
       <h2>Fusion History - {props.loc}</h2>
       <Divider />
-      <Input style={{marginLeft: '15px', marginRight: '15px'}} fluid icon='search' placeholder='Search...' onChange={handleSearchChange} />
-      <Divider  style={{marginBottom:0}}/>
+      <Input style={{ marginLeft: '15px', marginRight: '15px' }} fluid icon="search" placeholder="Search..." onChange={handleSearchChange} />
+      <Divider style={{ marginBottom: 0 }} />
       <Query
         query={gql`
         {
@@ -47,6 +83,7 @@ const FusionHistory = (props: { path: string; loc?: string }) => {
     name
     versionHistory {
       version
+      diffUrl
       createdAt
       githubCommitData {
           sha
@@ -92,39 +129,50 @@ const FusionHistory = (props: { path: string; loc?: string }) => {
                     createdAtStyle={{ fontWeight: 'bold', fontSize: '14px' }}
                     title={`Version: ${version.version}`}
                     createdAt={dayjs(version.createdAt).format('YYYY-MM-DD hh:mm a')}
-                    icon={<Logo style={{width:'20px', height: '20px'}} />}
+                    icon={<Logo style={{ width: '20px', height: '20px' }} />}
                   >
                     {version.githubCommitData && (
                       <div>
                         <h3 style={{ marginBottom: '5px' }}>Commits: </h3>
-                        <ul
-                          style={{
-                            fontSize: '.9rem',
-                            marginLeft: '20px',
-                            listStyleType: 'square',
-                          }}
-                        >
-                          {version.githubCommitData.map((commit: any) => (
-                            <li
-                              style={{
-                                opacity:
-                                  !!searchTerm && !commit.commit.message.toLowerCase().includes(searchTerm) && !commit.commit.author.name.toLowerCase().includes(searchTerm)
-                                    ? 0.3
-                                    : 1,
-                              }}
-                            >
-                              {processString(config)(commit.commit.message)} by <b>{commit.commit.author.name}</b>
-                              <a rel="noopener noreferrer" href={`https://github.com/azure/azure-functions-ux/commit/${commit.sha}`} target="_blank">
-                                {commit.sha}
-                              </a>
-                            </li>
-                          ))}
-                        </ul>
+                        <Table celled style={{fontSize:'.9rem'}}>
+                          <Table.Header>
+                            <Table.Row>
+                              <Table.HeaderCell>Author</Table.HeaderCell>
+                              <Table.HeaderCell>Message</Table.HeaderCell>
+                              <Table.HeaderCell>Bugs</Table.HeaderCell>
+                              <Table.HeaderCell>Open</Table.HeaderCell>
+                            </Table.Row>
+                          </Table.Header>
+                          <Table.Body>
+                            {version.githubCommitData.map((commit: any) => (
+                              <Table.Row
+                                style={{
+                                  opacity:
+                                    !!searchTerm && !commit.commit.message.toLowerCase().includes(searchTerm) && !commit.commit.author.name.toLowerCase().includes(searchTerm)
+                                      ? 0.3
+                                      : 1,
+                                }}
+                              >
+                                <Table.Cell>
+                                  <p>{commit.commit.author.name}</p>
+                                </Table.Cell>
+                                <Table.Cell>
+                                  {/* */}
+                                  {bulletString(commit.commit.message)}
+                                </Table.Cell>
+                                <Table.Cell>{getBugList(commit.commit.message)}</Table.Cell>
+                                <Table.Cell>
+                                  <Button onClick={() => {}}>Open</Button>
+                                </Table.Cell>
+                              </Table.Row>
+                            ))}
+                          </Table.Body>
+                        </Table>
                       </div>
                     )}
                     <Divider />
                     <div style={{ float: 'right' }}>
-                      <Button style={{ margin: '5px' }} primary onClick={() => onCommitClick(version.githubCommitData.permalink_url)}>
+                      <Button style={{ margin: '5px' }} disabled={!version.diffUrl} primary onClick={() => onCommitClick(version.diffUrl)}>
                         See changes from last release
                       </Button>
                       <Button style={{ margin: '5px' }} secondary onClick={() => onBuildClick(version.version)}>

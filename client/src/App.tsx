@@ -5,19 +5,11 @@ import { ReactComponent as Logo } from './AzureAppService.svg';
 import { Router, Link } from '@reach/router';
 import FusionHistory from './FusionHistory/FusionHistory';
 import IbizaHistory from './IbizaHistory/IbizaHistory';
+import NavBar from './Components/NavBar';
 const App: FC = () => {
   return (
     <>
-      <Menu fixed="top" inverted>
-        <Container>
-          <Menu.Item as={Link} to="#" link header>
-            <Logo style={{ height: '50px', width: '50px' }} />
-            UX Versions
-          </Menu.Item>
-          <Menu.Item as={Link} to="#">Dashboard</Menu.Item>
-        </Container>
-      </Menu>
-
+      <NavBar />
       <Container style={{ marginTop: '7em' }} fluid>
         <Router>
           <Dashboard path="/"/>
