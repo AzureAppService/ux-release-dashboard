@@ -193,18 +193,18 @@ export async function run(context: any, req: any) {
       }
       const post = connection.manager.create(FusionVersion, document);
       await connection.manager.save(FusionVersion, post);
-      await axios({
-        method: 'post',
-        url: process.env.EventWebhookUrl,
-        data: {
-          environment: document.prod ? "prod" : 'state',
-          portal: "fusion",
-          oldVersion: !lastVersion ? '' : lastVersion.version,
-          newVersion: document.version,
-          regions: document.name,
-          link: `https://uxversions.azurefd.net/fusion/history/${document.name}`
-        }
-      })
+      // await axios({
+      //   method: 'post',
+      //   url: process.env.EventWebhookUrl,
+      //   data: {
+      //     environment: document.prod ? "prod" : 'state',
+      //     portal: "fusion",
+      //     oldVersion: !lastVersion ? '' : lastVersion.version,
+      //     newVersion: document.version,
+      //     regions: document.name,
+      //     link: `https://uxversions.azurefd.net/fusion/history/${document.name}`
+      //   }
+      // })
     }
   });
   await Promise.all(promises);

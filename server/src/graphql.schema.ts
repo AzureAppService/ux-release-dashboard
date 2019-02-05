@@ -35,6 +35,8 @@ export class GithubCommitAuthor {
     name: string;
     email: string;
     date: string;
+    login?: string;
+    avatar_url?: string;
 }
 
 export class GithubCommitData {
