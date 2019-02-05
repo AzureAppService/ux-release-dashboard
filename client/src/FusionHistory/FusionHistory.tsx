@@ -5,8 +5,8 @@ import { Timeline, TimelineEvent } from 'react-event-timeline';
 import { ReactComponent as Logo } from '../AzureAppService.svg';
 import processString from 'react-process-string';
 import dayjs from 'dayjs';
-import { Button, Divider, Search, SearchProps, Input, InputProps, Table, Label, Tab } from 'semantic-ui-react';
-import { Link } from '@reach/router';
+import { Button, Divider, Input, InputProps, Table, Image } from 'semantic-ui-react';
+
 
 const TimelineEventNew = TimelineEvent as any;
 const config = [
@@ -91,6 +91,7 @@ const FusionHistory = (props: { path: string; loc?: string }) => {
           commit {
             author {
               name
+              avatar_url
             }
             message
           }
@@ -155,7 +156,8 @@ const FusionHistory = (props: { path: string; loc?: string }) => {
                                 }}
                               >
                                 <Table.Cell>
-                                  <p>{commit.commit.author.name}</p>
+                                  <Image src={commit.commit.author.avatar_url} avatar />
+                                  <span>{commit.commit.author.name}</span>
                                 </Table.Cell>
                                 <Table.Cell>
                                   {/* */}
