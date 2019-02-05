@@ -126,7 +126,7 @@ const getGithubSinceLast = async (commitId1, commitId2, retry = 0) => {
           },
         };
       });
-      return {commits: commitsData, diffUrl};
+      return {commits: commitsData, diffUrl: call.data.permalink_url};
     }
     if(retry < 5){
       await sleep(5000);
