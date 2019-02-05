@@ -113,7 +113,8 @@ const getDevOpsBuild = async (version, retry = 0) => {
 
 const getGithubSinceLast = async (commitId1, commitId2, retry = 0) => {
   try {
-    const call = await axios.get(`https://api.github.com/repos/azure/azure-functions-ux/compare/${commitId1}...${commitId2}`);
+    const diffUrl = `https://api.github.com/repos/azure/azure-functions-ux/compare/${commitId1}...${commitId2}`;
+    const call = await axios.get(diffUrl);
     if (call.status === 200) {
       const commitsData = call.data.commits.map(x => {
         return {
@@ -125,7 +126,7 @@ const getGithubSinceLast = async (commitId1, commitId2, retry = 0) => {
           },
         };
       });
-      return commitsData;
+      return {commits: commitsData, diffUrl};
     }
     if(retry < 5){
       await sleep(5000);
@@ -171,6 +172,7 @@ export async function run(context: any, req: any) {
       devOpsData,
       lastVersion: null,
       githubCommitData: null,
+      diffUrl: null
     };
 
     const lastVersion = await connection.manager
@@ -185,7 +187,8 @@ export async function run(context: any, req: any) {
         document.lastVersion = lastVersion.version;
         if (isNewerVersion(document.lastVersion, document.version)) {
           const githubCommitData = await getGithubSinceLast(lastVersion.devOpsData.sourceVersion, devOpsData.sourceVersion);
-          document.githubCommitData = githubCommitData;
+          document.githubCommitData = githubCommitData.commits;
+          document.diffUrl = githubCommitData.diffUrl;
         }
       }
       const post = connection.manager.create(FusionVersion, document);

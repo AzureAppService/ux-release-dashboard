@@ -19,6 +19,9 @@ export class FusionVersion {
     @Column()
     prod: boolean;
 
+    @Column({nullable:true})
+    diffUrl: string;
+    
     @ManyToOne(type => DevOpsData, build => build.versions, {cascade: true})
     @JoinColumn()
     devOpsData?: DevOpsData;
