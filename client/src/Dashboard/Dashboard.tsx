@@ -29,7 +29,7 @@ const DashboardQuery = gql`
   }
 `;
 const IbizaProdStages = ['stage1', 'stage2', 'stage3', 'stage4', 'stage5'];
-
+const reactKawaiiFaces = ['sad', 'shocked', 'happy', 'blissful', 'lovestruck', 'excited', 'ko']
 const sortFunctionFusion = (a: FusionLocation, b: FusionLocation) => {
   if (a.latestVersion!.version! < b.latestVersion!.version!) {
     return 1;
@@ -50,13 +50,13 @@ interface QueryDataType {
   fusionLocations: FusionLocation[];
   ibizaStages: Stage[];
 }
-const ProdView = (data: QueryDataType) => {
+const ProdView = (data: QueryDataType, kittyFace: number, onKittyClick: () => void) => {
   return (
     <>
       <Grid stackable columns={2}>
         <Grid.Column>
           <IbizaStages header="Ibiza" ibizaStages={data!.ibizaStages!.filter(x => IbizaProdStages.includes(x.name))} />
-          <Cat size={320} mood="excited" color="#596881" />
+          <Cat size={320} mood={reactKawaiiFaces[kittyFace]} color="#596881" />
         </Grid.Column>
         <Grid.Column>
           <FusionLocationsCard header="Fusion" fusionLocations={data!.fusionLocations!.filter(x => x.prod).sort(sortFunctionFusion)} />
@@ -65,13 +65,13 @@ const ProdView = (data: QueryDataType) => {
     </>
   );
 };
-const StageView = (data: QueryDataType) => {
+const StageView = (data: QueryDataType, kittyFace: number, onKittyClick: () => void) => {
   return (
     <>
       <Grid stackable columns={2}>
         <Grid.Column>
           <IbizaStages header="Ibiza" ibizaStages={data!.ibizaStages!.filter(x => !IbizaProdStages.includes(x.name))} />
-          <Cat size={320} mood="blissful" color="#596881" />
+          <Cat size={320} mood={reactKawaiiFaces[kittyFace]} color="#596881" />
         </Grid.Column>
         <Grid.Column>
           <FusionLocationsCard header="Fusion" fusionLocations={data!.fusionLocations!.filter(x => !x.prod).sort(sortFunctionFusion)} />
@@ -82,12 +82,20 @@ const StageView = (data: QueryDataType) => {
 };
 
 const Dashboard = (props: {path:string}) => {
+  const [kittyFace1, setKittyFace1] = useState(5);
+  const [kittyFace2, setKittyFace2] = useState(3);
+  const changeKitty1 = () => {
+    setKittyFace1((kittyFace1+1) % 7);
+  }
+  const changeKitty2 = () => {
+    setKittyFace2((kittyFace2+1) % 7);
+  }
   return (
     <Query<QueryDataType> query={DashboardQuery}>
       {({ loading, error, data }) => {
         if (loading) return <div className="ui active centered inline loader" />;
         if (error) return <p>Error :(</p>;
-        const panes = [{ menuItem: 'Production', render: () => ProdView(data!) }, { menuItem: 'Stage', render: () => StageView(data!) }];
+        const panes = [{ menuItem: 'Production', render: () => ProdView(data!, kittyFace1, changeKitty1) }, { menuItem: 'Stage', render: () => StageView(data!, kittyFace2, changeKitty2) }];
         return <Tab panes={panes} />;
       }}
     </Query>
