@@ -98,15 +98,15 @@ const getDevOpsBuild = async (version, retry = 0) => {
         },
       };
     }
-    if(retry < 5){
+    if (retry < 5) {
       await sleep(5000);
-      return getDevOpsBuild(version, retry+1);
+      return getDevOpsBuild(version, retry + 1);
     }
     return null;
   } catch (err) {
-    if(retry < 5){
+    if (retry < 5) {
       await sleep(5000);
-      return getDevOpsBuild(version, retry+1);
+      return getDevOpsBuild(version, retry + 1);
     }
     return null;
   }
@@ -122,23 +122,23 @@ const getGithubSinceLast = async (commitId1, commitId2, retry = 0) => {
         return {
           sha: x.sha,
           commit: {
-            author: {...x.commit.author, ...x.author},
+            author: { ...x.commit.author, ...x.author },
             committer: x.commit.commiter,
             message: x.commit.message,
           },
         };
       });
-      return {commits: commitsData, diffUrl: call.data.permalink_url};
+      return { commits: commitsData, diffUrl: call.data.permalink_url };
     }
-    if(retry < 5){
+    if (retry < 5) {
       await sleep(5000);
-      return getGithubSinceLast(commitId1, commitId2, retry+1);
+      return getGithubSinceLast(commitId1, commitId2, retry + 1);
     }
     return null;
   } catch (err) {
-    if(retry < 5){
+    if (retry < 5) {
       await sleep(5000);
-      return getGithubSinceLast(commitId1, commitId2, retry+1);
+      return getGithubSinceLast(commitId1, commitId2, retry + 1);
     }
     return null;
   }
@@ -163,52 +163,56 @@ export async function run(context: any, req: any) {
     entities: [DevOpsData, FusionVersion, GithubCommit, GithubCommitAuthor],
   });
 
-  const promises = functionObjs.map(async obj => {
-    const versionUri = obj.uri;
-    const versionFileCall = await axios.get(versionUri);
-    const devOpsData = await getDevOpsBuild(versionFileCall.data);
-    let document = {
-      name: obj.name,
-      prod: obj.prod,
-      version: versionFileCall.data,
-      devOpsData,
-      lastVersion: null,
-      githubCommitData: null,
-      diffUrl: null
-    };
+  try {
+    const promises = functionObjs.map(async obj => {
+      const versionUri = obj.uri;
+      const versionFileCall = await axios.get(versionUri);
+      const devOpsData = await getDevOpsBuild(versionFileCall.data);
+      let document = {
+        name: obj.name,
+        prod: obj.prod,
+        version: versionFileCall.data,
+        devOpsData,
+        lastVersion: null,
+        githubCommitData: null,
+        diffUrl: null,
+      };
 
-    const lastVersion = await connection.manager
-      .getRepository(FusionVersion)
-      .createQueryBuilder('version')
-      .where('version.name = :name', { name: obj.name })
-      .leftJoinAndSelect("version.devOpsData", "DevOpsData")
-      .orderBy('version.createdAt', 'DESC', 'NULLS LAST')
-      .getOne();
-    if (!lastVersion || lastVersion.version !== versionFileCall.data) {
-      if (lastVersion) {
-        document.lastVersion = lastVersion.version;
-        if (isNewerVersion(document.lastVersion, document.version)) {
-          const githubCommitData = await getGithubSinceLast(lastVersion.devOpsData.sourceVersion, devOpsData.sourceVersion);
-          document.githubCommitData = githubCommitData.commits;
-          document.diffUrl = githubCommitData.diffUrl;
+      const lastVersion = await connection.manager
+        .getRepository(FusionVersion)
+        .createQueryBuilder('version')
+        .where('version.name = :name', { name: obj.name })
+        .leftJoinAndSelect('version.devOpsData', 'DevOpsData')
+        .orderBy('version.createdAt', 'DESC', 'NULLS LAST')
+        .getOne();
+      if (!lastVersion || lastVersion.version !== versionFileCall.data) {
+        if (lastVersion) {
+          document.lastVersion = lastVersion.version;
+          if (isNewerVersion(document.lastVersion, document.version)) {
+            const githubCommitData = await getGithubSinceLast(lastVersion.devOpsData.sourceVersion, devOpsData.sourceVersion);
+            document.githubCommitData = githubCommitData.commits;
+            document.diffUrl = githubCommitData.diffUrl;
+          }
         }
+        const post = connection.manager.create(FusionVersion, document);
+        await connection.manager.save(FusionVersion, post);
+        await axios({
+          method: 'post',
+          url: process.env.EventWebhookUrl,
+          data: {
+            environment: document.prod ? 'prod' : 'state',
+            portal: 'fusion',
+            oldVersion: !lastVersion ? '' : lastVersion.version,
+            newVersion: document.version,
+            regions: document.name,
+            link: `https://uxversions.azurefd.net/fusion/history/${document.name}`,
+          },
+        });
       }
-      const post = connection.manager.create(FusionVersion, document);
-      await connection.manager.save(FusionVersion, post);
-      await axios({
-        method: 'post',
-        url: process.env.EventWebhookUrl,
-        data: {
-          environment: document.prod ? "prod" : 'state',
-          portal: "fusion",
-          oldVersion: !lastVersion ? '' : lastVersion.version,
-          newVersion: document.version,
-          regions: document.name,
-          link: `https://uxversions.azurefd.net/fusion/history/${document.name}`
-        }
-      })
-    }
-  });
-  await Promise.all(promises);
-  connection.close();
+    });
+    await Promise.all(promises);
+  } catch (err) {
+  } finally {
+    connection.close();
+  }
 }
