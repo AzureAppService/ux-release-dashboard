@@ -83,7 +83,7 @@ const StageView = (data: QueryDataType, kittyFace: number, onKittyClick: () => v
 
 const Dashboard = (props: {path:string}) => {
   const [kittyFace1, setKittyFace1] = useState(5);
-  const [kittyFace2, setKittyFace2] = useState(3);
+  const [kittyFace2, setKittyFace2] = useState(4);
   const changeKitty1 = () => {
     setKittyFace1((kittyFace1+1) % 7);
   }
