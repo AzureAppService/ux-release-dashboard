@@ -57,8 +57,10 @@ const ProdView = (data: QueryDataType, kittyFace: number, onKittyClick: () => vo
     <>
       <Grid stackable columns={2}>
         <Grid.Column>
-          <IbizaStages header="Ibiza" ibizaStages={data!.ibizaStages!.filter(x => IbizaProdStages.includes(x.name) && x.cloud === 'public')} />
-          <div onClick={onKittyClick} style={{width:'270px', marginLeft:'auto', marginRight:'auto'}} ><Cat size={320} mood={reactKawaiiFaces[kittyFace]} color="#596881" /></div>
+          <IbizaStages header="Public Ibiza" ibizaStages={data!.ibizaStages!.filter(x => IbizaProdStages.includes(x.name) && x.cloud === 'public')} />
+          <IbizaStages header="Mooncake Ibiza (Not Live Yet)" ibizaStages={data!.ibizaStages!.filter(x => IbizaProdStages.includes(x.name) && x.cloud === 'mooncake')} />
+          <IbizaStages header="Fairfax Ibiza (Not Live Yet)" ibizaStages={data!.ibizaStages!.filter(x => IbizaProdStages.includes(x.name) && x.cloud === 'fairfax')} />
+          <IbizaStages header="Blackforest Ibiza (Not Live Yet)" ibizaStages={data!.ibizaStages!.filter(x => IbizaProdStages.includes(x.name) && x.cloud === 'blackforest')} />
         </Grid.Column>
         <Grid.Column>
           <FusionLocationsCard header="Fusion" fusionLocations={data!.fusionLocations!.filter(x => x.prod).sort(sortFunctionFusion)} />
@@ -73,7 +75,9 @@ const StageView = (data: QueryDataType, kittyFace: number, onKittyClick: () => v
       <Grid stackable columns={2}>
         <Grid.Column>
           <IbizaStages header="Ibiza" ibizaStages={data!.ibizaStages!.filter(x => !IbizaProdStages.includes(x.name) && x.cloud === 'public')} />
-          <div onClick={onKittyClick} style={{width:'270px', marginLeft:'auto', marginRight:'auto'}}><Cat size={320} mood={reactKawaiiFaces[kittyFace]} onClick={onKittyClick} color="#596881" /></div>
+          <IbizaStages header="Mooncake Ibiza (Not Live Yet)" ibizaStages={data!.ibizaStages!.filter(x => !IbizaProdStages.includes(x.name) && x.cloud === 'mooncake')} />
+          <IbizaStages header="Fairfax Ibiza (Not Live Yet)" ibizaStages={data!.ibizaStages!.filter(x => !IbizaProdStages.includes(x.name) && x.cloud === 'fairfax')} />
+          <IbizaStages header="Blackforest Ibiza (Not Live Yet)" ibizaStages={data!.ibizaStages!.filter(x => !IbizaProdStages.includes(x.name) && x.cloud === 'blackforest')} />
         </Grid.Column>
         <Grid.Column>
           <FusionLocationsCard header="Fusion" fusionLocations={data!.fusionLocations!.filter(x => !x.prod).sort(sortFunctionFusion)} />
