@@ -30,6 +30,9 @@ export class FusionVersion {
   @Column()
   prod: boolean;
 
+  @Column({default: 'public'})
+  cloud: string;
+
   @Column({ nullable: true })
   diffUrl: string;
 

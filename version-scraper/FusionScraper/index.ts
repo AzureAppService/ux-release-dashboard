@@ -164,6 +164,17 @@ export async function run(context: any, req: any) {
   });
 
   try {
+    const getCloud =(name: string) => {
+      const cloud = name.split('-')[0].toLowerCase();
+      switch(cloud){
+        case 'mooncake':
+        case 'fairfax':
+        case 'blackforest':
+          return cloud;
+        default:
+          return 'public'
+      }
+    }
     const promises = functionObjs.map(async obj => {
       const versionUri = obj.uri;
       const versionFileCall = await axios.get(versionUri);
@@ -176,6 +187,7 @@ export async function run(context: any, req: any) {
         lastVersion: null,
         githubCommitData: null,
         diffUrl: null,
+        cloud: getCloud(obj.name),
       };
 
       const lastVersion = await connection.manager

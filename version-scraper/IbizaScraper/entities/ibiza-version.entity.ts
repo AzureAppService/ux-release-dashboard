@@ -16,6 +16,9 @@ export class IbizaVersion {
   @Column()
   name: string;
 
+  @Column({default: 'public'})
+  cloud: string;
+
   @Column()
   version: string;
 }
