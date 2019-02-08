@@ -1,7 +1,7 @@
 scalar DateTime
 type Query {
   ibizaStages: [Stage]
-  getIbizaStage(name: String): Stage
+  getIbizaStage(name: String, cloud: String): Stage
 }
 
 type IbizaVersion {
