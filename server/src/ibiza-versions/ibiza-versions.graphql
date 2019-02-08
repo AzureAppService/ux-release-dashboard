@@ -8,11 +8,13 @@ type IbizaVersion {
     id: Int
     name: String
     version: String
+    cloud: String
     createdAt: DateTime
 }
 
 type Stage {
     name: String!
     latestVersion: IbizaVersion
+    cloud: String!
     versionHistory: [IbizaVersion]
   }

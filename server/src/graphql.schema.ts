@@ -15,6 +15,7 @@ export class FusionLocation {
     name: string;
     url: string;
     prod: boolean;
+    cloud: string;
     latestVersion?: FusionVersion;
     versionHistory?: FusionVersion[];
 }
@@ -25,6 +26,7 @@ export class FusionVersion {
     name?: string;
     version?: string;
     prod?: boolean;
+    cloud?: string;
     lastVersion?: string;
     diffUrl?: string;
     devOpsData?: DevOpsData;
@@ -52,6 +54,7 @@ export class IbizaVersion {
     id?: number;
     name?: string;
     version?: string;
+    cloud?: string;
     createdAt?: DateTime;
 }
 
@@ -74,6 +77,7 @@ export class RequestedFor {
 export class Stage {
     name: string;
     latestVersion?: IbizaVersion;
+    cloud: string;
     versionHistory?: IbizaVersion[];
 }
 

@@ -17,6 +17,7 @@ const IbizaHistory = (props: { path: string; loc?: string }) => {
         {
           getIbizaStage(name: "${props.loc}") {
             name
+            cloud
             versionHistory {
               version
               createdAt
@@ -32,7 +33,7 @@ const IbizaHistory = (props: { path: string; loc?: string }) => {
 
           return (
             <Timeline>
-              {versionHistory.map(version => (
+              {versionHistory.filter(x=>x.cloud === 'public').map(version => (
                 <TimelineEventNew
                   key={version.createdAt}
                   titleStyle={{ fontWeight: 'bold', fontSize: '14px' }}

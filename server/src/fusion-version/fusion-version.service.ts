@@ -15,29 +15,32 @@ export class FusionVersionService {
       .createQueryBuilder('version')
       .select('version.name')
       .addSelect('version.prod')
+      .addSelect('version.cloud')
       .groupBy('version.name')
       .addGroupBy('version.prod')
+      .addGroupBy('version.cloud')
       .getRawMany();
 
     return c.map(x => ({
       name: x.version_name,
       prod: x.version_prod,
+      cloud: x.version_cloud,
       url: '',
     }));
   }
 
-  async getLatestVersion(name: string): Promise<FusionVersion> {
+  async getLatestVersion(name: string, cloud: string): Promise<FusionVersion> {
     const item = await this.connection.manager.find(FusionVersion, {
-      where: { name },
+      where: { name, cloud },
       order: { createdAt: 'DESC' },
       take: 1,
     });
     return item.length > 0 ? item[0] : null;
   }
 
-  async getVersionHistory(name: string): Promise<FusionVersion[]> {
+  async getVersionHistory(name: string, cloud: string): Promise<FusionVersion[]> {
     const items = await this.connection.manager.find(FusionVersion, {
-      where: { name },
+      where: { name, cloud },
       order: { createdAt: 'DESC' },
     });
     return items;

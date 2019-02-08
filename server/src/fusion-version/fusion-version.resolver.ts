@@ -5,7 +5,6 @@ import {
   Parent,
   Args,
 } from '@nestjs/graphql';
-import { PubSub } from 'graphql-subscriptions';
 import { FusionVersionService } from './fusion-version.service';
 import { FusionLocation } from 'src/graphql.schema';
 
@@ -25,15 +24,15 @@ export class FusionLocationResolvers {
 
   @ResolveProperty()
   async latestVersion(@Parent() fusionLocation: FusionLocation) {
-    const { name } = fusionLocation;
-    const item = await this.fusionService.getLatestVersion(name);
+    const { name, cloud } = fusionLocation;
+    const item = await this.fusionService.getLatestVersion(name, cloud);
     return item;
   }
 
   @ResolveProperty()
   async versionHistory(@Parent() fusionLocation: FusionLocation) {
-    const { name } = fusionLocation;
-    const items = await this.fusionService.getVersionHistory(name);
+    const { name, cloud } = fusionLocation;
+    const items = await this.fusionService.getVersionHistory(name,  cloud);
     return items;
   }
 }

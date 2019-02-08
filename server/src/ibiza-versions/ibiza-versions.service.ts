@@ -11,26 +11,29 @@ export class IbizaVersionsService {
     .getRepository(IbizaVersion)
     .createQueryBuilder('version')
     .select('version.name')
+    .addSelect('version.cloud')
     .groupBy('version.name')
+    .addGroupBy('version.cloud')
     .getRawMany();
 
     return c.map(x => ({
       name: x.version_name,
+      cloud: x.version_cloud,
     }));
   }
 
-  async getLatestVersion(name: string): Promise<IbizaVersion> {
+  async getLatestVersion(name: string, cloud: string): Promise<IbizaVersion> {
     const item = await this.connection.manager.find(IbizaVersion, {
-      where: { name },
+      where: { name, cloud },
       order: { createdAt: 'DESC' },
       take: 1,
     });
     return item.length > 0 ? item[0] : null;
   }
 
-  async getVersionHistory(name: string): Promise<IbizaVersion[]> {
+  async getVersionHistory(name: string, cloud: string): Promise<IbizaVersion[]> {
     const items = await this.connection.manager.find(IbizaVersion, {
-      where: { name },
+      where: { name, cloud },
       order: { createdAt: 'DESC' },
     });
     return items;

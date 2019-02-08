@@ -12,6 +12,7 @@ type FusionLocation {
     name: String!
     url: String!
     prod: Boolean!
+    cloud: String!
     latestVersion: FusionVersion
     versionHistory: [FusionVersion]
 }
@@ -22,6 +23,7 @@ type FusionVersion {
     name: String
     version: String
     prod: Boolean
+    cloud: String
     lastVersion: String
     diffUrl: String
     devOpsData: DevOpsData

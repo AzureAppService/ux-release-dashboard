@@ -17,16 +17,16 @@ export class IbizaResolvers {
   }
 
   @ResolveProperty()
-  async latestVersion(@Parent() fusionLocation: Stage) {
-    const { name } = fusionLocation;
-    const item = await this.ibizaService.getLatestVersion(name);
+  async latestVersion(@Parent() ibizaStage: Stage) {
+    const { name, cloud } = ibizaStage;
+    const item = await this.ibizaService.getLatestVersion(name, cloud);
     return item;
   }
 
   @ResolveProperty()
-  async versionHistory(@Parent() fusionLocation: Stage) {
-    const { name } = fusionLocation;
-    const items = await this.ibizaService.getVersionHistory(name);
+  async versionHistory(@Parent() ibizaStage: Stage) {
+    const { name, cloud } = ibizaStage;
+    const items = await this.ibizaService.getVersionHistory(name, cloud);
     return items;
   }
 }
