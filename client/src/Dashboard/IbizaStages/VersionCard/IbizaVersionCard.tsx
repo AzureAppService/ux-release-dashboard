@@ -20,8 +20,8 @@ const IbizaProdStages = ['stage1', 'stage2', 'stage3', 'stage4', 'stage5'];
 
 const IbizaVersionCard: FC<Props> = props => {
   const { header, items } = props;
-  const onHistoryClick = (location: any) => {
-    navigate(`/ibiza/history/${location}`);
+  const onHistoryClick = (location: string, cloud: string) => {
+    navigate(`/ibiza/history/${cloud}/${location}`);
   };
 
   return (
@@ -45,7 +45,7 @@ const IbizaVersionCard: FC<Props> = props => {
                 <td>{item.latestVersion!.version}</td>
                 <td>{dayjs(item.latestVersion!.createdAt).format('MM-DD-YYYY - h:mmA')}</td>
                 <td>
-                  <Button primary onClick={() => onHistoryClick(item.name)}>
+                  <Button primary onClick={() => onHistoryClick(item.cloud,item.name)}>
                     Open
                   </Button>
                 </td>

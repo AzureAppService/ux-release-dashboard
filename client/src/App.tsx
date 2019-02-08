@@ -14,7 +14,7 @@ const App: FC = () => {
         <Router>
           <Dashboard path="/"/>
           <FusionHistory path="/fusion/history/:loc" />
-          <IbizaHistory path="/ibiza/history/:loc" />
+          <IbizaHistory path="/ibiza/history/:cloud/:loc" />
         </Router>
       </Container>
     </>

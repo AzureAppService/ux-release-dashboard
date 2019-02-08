@@ -7,7 +7,7 @@ import dayjs from 'dayjs';
 import { Divider } from 'semantic-ui-react';
 const TimelineEventNew = TimelineEvent as any;
 
-const IbizaHistory = (props: { path: string; loc?: string }) => {
+const IbizaHistory = (props: { path: string; loc?: string, cloud?: string }) => {
   return (
     <>
       <h2>Ibiza History - {props.loc}</h2>
@@ -15,9 +15,8 @@ const IbizaHistory = (props: { path: string; loc?: string }) => {
       <Query
         query={gql`
         {
-          getIbizaStage(name: "${props.loc}") {
+          getIbizaStage(name: "${props.loc}", cloud: "${props.cloud}") {
             name
-            cloud
             versionHistory {
               version
               createdAt
@@ -33,7 +32,7 @@ const IbizaHistory = (props: { path: string; loc?: string }) => {
 
           return (
             <Timeline>
-              {versionHistory.filter(x=>x.cloud === 'public').map(version => (
+              {versionHistory.map(version => (
                 <TimelineEventNew
                   key={version.createdAt}
                   titleStyle={{ fontWeight: 'bold', fontSize: '14px' }}

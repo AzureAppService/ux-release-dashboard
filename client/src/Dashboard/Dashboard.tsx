@@ -13,6 +13,7 @@ const DashboardQuery = gql`
     fusionLocations {
       name
       prod
+      cloud
       latestVersion {
         version
         createdAt
@@ -20,6 +21,7 @@ const DashboardQuery = gql`
     }
     ibizaStages {
       name
+      cloud
       latestVersion {
         name
         version

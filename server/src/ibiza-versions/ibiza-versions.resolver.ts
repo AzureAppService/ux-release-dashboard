@@ -12,8 +12,8 @@ export class IbizaResolvers {
   }
 
   @Query()
-  async getIbizaStage(@Args('name') name: string) {
-    return {name};
+  async getIbizaStage(@Args('name') name: string, @Args('cloud') cloud: string) {
+    return {name, cloud};
   }
 
   @ResolveProperty()
