@@ -45,7 +45,7 @@ const IbizaVersionCard: FC<Props> = props => {
                 <td>{item.latestVersion!.version}</td>
                 <td>{dayjs(item.latestVersion!.createdAt).format('MM-DD-YYYY - h:mmA')}</td>
                 <td>
-                  <Button primary onClick={() => onHistoryClick(item.cloud,item.name)}>
+                  <Button primary onClick={() => onHistoryClick(item.name, item.cloud)}>
                     Open
                   </Button>
                 </td>
