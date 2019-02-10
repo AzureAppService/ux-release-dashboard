@@ -9,13 +9,22 @@ interface Props {
   header: string;
   items: Stage[];
 }
-const IbizaProdToRegion: { [key: string]: string } = {
-  stage1: 'Central US EUAP',
-  stage2: 'West Central US',
-  stage3: 'South Central US',
-  stage4: 'West US',
-  stage5: 'World',
+const IbizaProdToRegion: { [key: string]: { [key: string]: string } } = {
+  public: { stage1: 'Central US EUAP', stage2: 'West Central US', stage3: 'South Central US', stage4: 'West US', stage5: 'World' },
+  mooncake: {
+    stage1: 'North China',
+    stage2: 'Rest of China',
+  },
+  blackforest: {
+    stage1: 'North East Germany',
+    stage2: 'Rest of Germany',
+  },
+  fairfax: {
+    stage1: 'Central US Gov',
+    stage2: 'Rest of US Gov',
+  },
 };
+
 const IbizaProdStages = ['stage1', 'stage2', 'stage3', 'stage4', 'stage5'];
 
 const IbizaVersionCard: FC<Props> = props => {
@@ -37,21 +46,31 @@ const IbizaVersionCard: FC<Props> = props => {
           </tr>
         </thead>
         <tbody>
-          {items.map(item => {
-            const location = IbizaProdToRegion[item.name];
-            return (
-              <tr key={item.name}>
-                <td>{!!location ? `${item.name} (${location})` : item.name}</td>
-                <td>{item.latestVersion!.version}</td>
-                <td>{dayjs(item.latestVersion!.createdAt).format('MM-DD-YYYY - h:mmA')}</td>
-                <td>
-                  <Button primary onClick={() => onHistoryClick(item.name, item.cloud)}>
-                    Open
-                  </Button>
-                </td>
-              </tr>
-            );
-          })}
+          {items
+            .sort((a: Stage, b: Stage) => {
+              if (a.name < b.name) {
+                return -1;
+              }
+              if (a.name > b.name) {
+                return 1;
+              }
+              return 0;
+            })
+            .map(item => {
+              const location = IbizaProdToRegion[item.cloud][item.name];
+              return (
+                <tr key={item.name}>
+                  <td>{!!location ? `${item.name} (${location})` : item.name}</td>
+                  <td>{item.latestVersion!.version}</td>
+                  <td>{dayjs(item.latestVersion!.createdAt).format('MM-DD-YYYY - h:mmA')}</td>
+                  <td>
+                    <Button primary onClick={() => onHistoryClick(item.name, item.cloud)}>
+                      Open
+                    </Button>
+                  </td>
+                </tr>
+              );
+            })}
         </tbody>
       </table>
     </div>
