@@ -27,11 +27,11 @@ const IbizaBlackforestToRegion = {
 };
 
 const processVersions = async (connection: Connection, regionMap: { [key: string]: string }, cloud: string, versionFileCall: any) => {
-  const versionFile = Object.keys(versionFileCall.data)
+  const versionFile = Object.keys(versionFileCall.data.config)
     .filter(x => x.indexOf('$') === -1)
     .map(x => ({
       name: x,
-      version: versionFileCall.data[x],
+      version: versionFileCall.data.config[x],
       cloud,
     }));
 
@@ -65,10 +65,10 @@ const processVersions = async (connection: Connection, regionMap: { [key: string
   await Promise.all(p);
 };
 export async function run(context: any, myTimer: any) {
-  const ibizaVersionsUri = 'https://appsvcstorage.blob.core.windows.net/hostingsvcprod/config.json';
-  const ibizaVersionUriMooncake = 'https://appsvchostingsvc.blob.core.chinacloudapi.cn/appsvchostingsvc/config.json';
-  const ibizaVersionUriFairfax = 'https://appsvchostingsvc.blob.core.usgovcloudapi.net/appsvchostingsvc/config.json';
-  const ibizaVersionUriBlackforest = 'https://appsvchostingsvc.blob.core.cloudapi.de/appsvchostingsvc/config.json';
+  const ibizaVersionsUri = 'https://hosting.portal.azure.net/websites/api/diagnostics';
+  const ibizaVersionUriMooncake = 'https://hosting.azureportal.chinacloudapi.cn/websites/api/diagnostics';
+  const ibizaVersionUriFairfax = 'https://hosting.azureportal.usgovcloudapi.net/websites/api/diagnostics';
+  const ibizaVersionUriBlackforest = 'https://hosting.azure-api.de/websites/api/diagnostics';
   const connection: Connection = await createConnection({
     type: 'postgres',
     host: process.env.POSTGRES_ENDPOINT,
@@ -93,6 +93,7 @@ export async function run(context: any, myTimer: any) {
     versionFileCall = await axios.get(ibizaVersionUriFairfax);
     await processVersions(connection, IbizaFairfaxToRegion, 'fairfax', versionFileCall);
   } catch (err) {
+    console.log(err);
   } finally {
     connection.close();
   }
