@@ -45,20 +45,19 @@ const processVersions = async (connection: Connection, regionMap: { [key: string
     if (!lastVersion || lastVersion.version !== v.version) {
       const post = connection.manager.create(IbizaVersion, v);
       await connection.manager.save(IbizaVersion, post);
-      if (cloud === 'public') {
-        await axios({
-          method: 'post',
-          url: process.env.EventWebhookUrl,
-          data: {
-            environment: IbizaProdStages.includes(v.name) ? 'prod' : 'stage',
-            portal: 'ibiza',
-            oldVersion: !lastVersion ? '' : lastVersion.version,
-            newVersion: v.version,
-            regions: regionMap[v.name],
-            link: `https://uxversions.azurefd.net`,
-          },
-        });
-      }
+
+      await axios({
+        method: 'post',
+        url: process.env.EventWebhookUrl,
+        data: {
+          environment: IbizaProdStages.includes(v.name) ? 'prod' : 'stage',
+          portal: 'ibiza',
+          oldVersion: !lastVersion ? '' : lastVersion.version,
+          newVersion: v.version,
+          regions: regionMap[v.name],
+          link: `https://uxversions.azurefd.net`,
+        },
+      });
     }
   });
 
