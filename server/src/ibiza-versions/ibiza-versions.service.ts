@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { IbizaVersion } from './ibiza-version.entity';
 import { Connection } from 'typeorm';
-import { Stage } from 'src/graphql.schema';
+import { Stage } from '../graphql.schema';
 
 @Injectable()
 export class IbizaVersionsService {

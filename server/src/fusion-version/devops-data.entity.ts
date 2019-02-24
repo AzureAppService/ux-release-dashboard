@@ -1,10 +1,7 @@
 import {
   Entity,
   Column,
-  CreateDateColumn,
   PrimaryColumn,
-  PrimaryGeneratedColumn,
-  ManyToOne,
   OneToMany,
 } from 'typeorm';
 import { FusionVersion } from './fusion-version.entity';

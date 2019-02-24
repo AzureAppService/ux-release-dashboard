@@ -1,6 +1,6 @@
 import { Query, Resolver, ResolveProperty, Parent, Args } from '@nestjs/graphql';
 import { IbizaVersionsService } from './ibiza-versions.service';
-import { Stage } from 'src/graphql.schema';
+import { Stage } from '../graphql.schema';
 
 @Resolver('Stage')
 export class IbizaResolvers {

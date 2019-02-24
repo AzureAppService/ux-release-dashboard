@@ -6,7 +6,7 @@ import {
   Args,
 } from '@nestjs/graphql';
 import { FusionVersionService } from './fusion-version.service';
-import { FusionLocation } from 'src/graphql.schema';
+import { FusionLocation } from '../graphql.schema';
 
 @Resolver('FusionLocation')
 export class FusionLocationResolvers {

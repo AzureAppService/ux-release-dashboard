@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Connection } from 'typeorm';
 import { FusionVersion } from './fusion-version.entity';
-import { FusionLocation } from 'src/graphql.schema';
+import { FusionLocation } from '../graphql.schema';
 @Injectable()
 export class FusionVersionService {
   constructor(private readonly connection: Connection) {}
