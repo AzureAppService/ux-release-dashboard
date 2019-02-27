@@ -59,7 +59,7 @@ const ProdView = (data: QueryDataType, kittyFace: number, onKittyClick: () => vo
         <Grid.Column>
           <IbizaStages header="Public Ibiza" ibizaStages={data!.ibizaStages!.filter(x => IbizaProdStages.includes(x.name) && x.cloud === 'public')} />
           <IbizaStages header="Mooncake Ibiza (Not Live Yet)" ibizaStages={data!.ibizaStages!.filter(x => IbizaProdStages.includes(x.name) && x.cloud === 'mooncake')} />
-          <IbizaStages header="Fairfax Ibiza (Not Live Yet)" ibizaStages={data!.ibizaStages!.filter(x => IbizaProdStages.includes(x.name) && x.cloud === 'fairfax')} />
+          <IbizaStages header="Fairfax Ibiza" ibizaStages={data!.ibizaStages!.filter(x => IbizaProdStages.includes(x.name) && x.cloud === 'fairfax')} />
           <IbizaStages header="Blackforest Ibiza (Not Live Yet)" ibizaStages={data!.ibizaStages!.filter(x => IbizaProdStages.includes(x.name) && x.cloud === 'blackforest')} />
         </Grid.Column>
         <Grid.Column>
@@ -77,7 +77,7 @@ const StageView = (data: QueryDataType, kittyFace: number, onKittyClick: () => v
         <Grid.Column>
           <IbizaStages header="Ibiza" ibizaStages={data!.ibizaStages!.filter(x => !IbizaProdStages.includes(x.name) && x.cloud === 'public')} />
           <IbizaStages header="Mooncake Ibiza (Not Live Yet)" ibizaStages={data!.ibizaStages!.filter(x => !IbizaProdStages.includes(x.name) && x.cloud === 'mooncake')} />
-          <IbizaStages header="Fairfax Ibiza (Not Live Yet)" ibizaStages={data!.ibizaStages!.filter(x => !IbizaProdStages.includes(x.name) && x.cloud === 'fairfax')} />
+          <IbizaStages header="Fairfax Ibiza" ibizaStages={data!.ibizaStages!.filter(x => !IbizaProdStages.includes(x.name) && x.cloud === 'fairfax')} />
           <IbizaStages header="Blackforest Ibiza (Not Live Yet)" ibizaStages={data!.ibizaStages!.filter(x => !IbizaProdStages.includes(x.name) && x.cloud === 'blackforest')} />
         </Grid.Column>
         <Grid.Column>
