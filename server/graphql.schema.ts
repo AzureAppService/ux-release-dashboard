@@ -78,7 +78,8 @@ export class Stage {
     name: string;
     latestVersion?: IbizaVersion;
     cloud: string;
-    versionHistory?: IbizaVersion[];
+
+    abstract versionHistory(take?: number, skip?: number): IbizaVersion[] | Promise<IbizaVersion[]>;
 }
 
 export type Date = any;

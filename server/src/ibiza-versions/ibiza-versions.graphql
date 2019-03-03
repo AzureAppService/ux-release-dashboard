@@ -16,5 +16,5 @@ type Stage {
     name: String!
     latestVersion: IbizaVersion
     cloud: String!
-    versionHistory: [IbizaVersion]
+    versionHistory(take: Int, skip: Int): [IbizaVersion]
   }

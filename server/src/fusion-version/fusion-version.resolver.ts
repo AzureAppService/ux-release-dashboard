@@ -30,9 +30,9 @@ export class FusionLocationResolvers {
   }
 
   @ResolveProperty()
-  async versionHistory(@Parent() fusionLocation: FusionLocation) {
+  async versionHistory(@Parent() fusionLocation: FusionLocation, @Args('take') take?: number, @Args('skip') skip?: number) {
     const { name, cloud } = fusionLocation;
-    const items = await this.fusionService.getVersionHistory(name,  cloud);
+    const items = await this.fusionService.getVersionHistory(name,  cloud, take, skip);
     return items;
   }
 }

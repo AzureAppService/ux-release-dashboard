@@ -24,9 +24,9 @@ export class IbizaResolvers {
   }
 
   @ResolveProperty()
-  async versionHistory(@Parent() ibizaStage: Stage) {
+  async versionHistory(@Parent() ibizaStage: Stage, @Args('take') take?: number, @Args('skip') skip?: number) {
     const { name, cloud } = ibizaStage;
-    const items = await this.ibizaService.getVersionHistory(name, cloud);
+    const items = await this.ibizaService.getVersionHistory(name, cloud, take, skip);
     return items;
   }
 }

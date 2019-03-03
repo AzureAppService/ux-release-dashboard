@@ -38,10 +38,17 @@ export class FusionVersionService {
     return item.length > 0 ? item[0] : null;
   }
 
-  async getVersionHistory(name: string, cloud: string): Promise<FusionVersion[]> {
+  async getVersionHistory(
+    name: string,
+    cloud: string,
+    take = 5,
+    skip = 0,
+  ): Promise<FusionVersion[]> {
     const items = await this.connection.manager.find(FusionVersion, {
       where: { name, cloud },
       order: { createdAt: 'DESC' },
+      skip,
+      take,
     });
     return items;
   }

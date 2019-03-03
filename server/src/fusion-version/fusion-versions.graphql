@@ -14,7 +14,7 @@ type FusionLocation {
     prod: Boolean!
     cloud: String!
     latestVersion: FusionVersion
-    versionHistory: [FusionVersion]
+    versionHistory(take: Int, skip: Int): [FusionVersion]
 }
 
 type FusionVersion {
