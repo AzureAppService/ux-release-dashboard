@@ -1,3 +1,9 @@
+
+/** ------------------------------------------------------
+ * THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+ * -------------------------------------------------------
+ */
+
 /* tslint:disable */
 export class DevOpsData {
     id: number;
@@ -78,8 +84,7 @@ export class Stage {
     name: string;
     latestVersion?: IbizaVersion;
     cloud: string;
-
-    abstract versionHistory(take?: number, skip?: number): IbizaVersion[] | Promise<IbizaVersion[]>;
+    versionHistory?: IbizaVersion[];
 }
 
 export type Date = any;
