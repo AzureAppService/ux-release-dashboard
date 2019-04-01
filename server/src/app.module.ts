@@ -51,7 +51,6 @@ import { SsrModule } from './ssr/ssr.module';
         outputAs: 'class',
       },
     }),
-    SsrModule,
   ],
   controllers: [],
   providers: [],
