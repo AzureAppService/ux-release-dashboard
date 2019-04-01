@@ -29,10 +29,10 @@ import { SsrModule } from './ssr/ssr.module';
         type: 'redis',
         duration: 60000,
         options: {
-          host: 'uxversions.redis.cache.windows.net',
+          host: process.env.REDIS_HOSTNAME,
           port: 6380,
-          password: '86Mg4ExIC0imrEVyjmiEdtDn313OlHNBfutx1U4E5FE=',
-          tls: { servername: 'uxversions.redis.cache.windows.net' },
+          password: process.env.REDIS_PASSWORD,
+          tls: { servername: process.env.REDIS_HOSTNAME },
         },
       },
     }),
