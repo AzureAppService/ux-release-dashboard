@@ -19,6 +19,7 @@ export class FusionVersionService {
       .groupBy('version.name')
       .addGroupBy('version.prod')
       .addGroupBy('version.cloud')
+      .cache(true)
       .getRawMany();
 
     return c.map(x => ({
@@ -34,6 +35,7 @@ export class FusionVersionService {
       where: { name, cloud },
       order: { createdAt: 'DESC' },
       take: 1,
+      cache: true,
     });
     return item.length > 0 ? item[0] : null;
   }
@@ -42,13 +44,14 @@ export class FusionVersionService {
     name: string,
     cloud: string,
     take = 5,
-    skip = 0,
+    skip = +0,
   ): Promise<FusionVersion[]> {
     const items = await this.connection.manager.find(FusionVersion, {
       where: { name, cloud },
       order: { createdAt: 'DESC' },
       skip,
       take,
+      cache: true,
     });
     return items;
   }

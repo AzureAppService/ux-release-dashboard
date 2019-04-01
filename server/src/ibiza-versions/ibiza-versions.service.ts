@@ -14,6 +14,7 @@ export class IbizaVersionsService {
     .addSelect('version.cloud')
     .groupBy('version.name')
     .addGroupBy('version.cloud')
+    .cache(true)
     .getRawMany();
 
     return c.map(x => ({
@@ -27,16 +28,18 @@ export class IbizaVersionsService {
       where: { name, cloud },
       order: { createdAt: 'DESC' },
       take: 1,
+      cache: true,
     });
     return item.length > 0 ? item[0] : null;
   }
 
-  async getVersionHistory(name: string, cloud: string, take= 5, skip = 0): Promise<IbizaVersion[]> {
+  async getVersionHistory(name: string, cloud: string, take= 5, skip = +0): Promise<IbizaVersion[]> {
     const items = await this.connection.manager.find(IbizaVersion, {
       where: { name, cloud },
       order: { createdAt: 'DESC' },
       skip,
       take,
+      cache: true,
     });
     return items;
   }
