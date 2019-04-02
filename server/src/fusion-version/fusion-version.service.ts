@@ -1,15 +1,74 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Connection } from 'typeorm';
 import { FusionVersion } from './fusion-version.entity';
 import { FusionLocation } from '../graphql.schema';
 @Injectable()
-export class FusionVersionService {
+export class FusionVersionService implements OnModuleInit {
+  private locations: FusionLocation[] = [];
+  private latestVersion: { [key: string]: FusionVersion };
+  private versionHistory: { [key: string]: FusionVersion[] };
   constructor(private readonly connection: Connection) {}
-  async findAll(): Promise<FusionVersion[]> {
-    return this.connection.manager.find(FusionVersion);
+
+  async onModuleInit() {
+    this.updateData();
+    setInterval(() => {
+      this.updateData();
+    }, 10000);
+  }
+  private async updateData() {
+    this.locations = await this.getLocationsQuery();
+    const promises = this.locations.map(({ name, cloud }) => {
+      return this.getLatestVersionQuery(name, cloud).then(x => ({
+        name,
+        cloud,
+        value: x,
+      }));
+    });
+    const values = await Promise.all(promises);
+    this.latestVersion = values.reduce((acc, val) => {
+      acc[`${val.name}-${val.cloud}`] = val.value;
+      return acc;
+    }, {});
+
+    const historyPromises = this.locations.map(({ name, cloud }) => {
+      return this.getVersionHistoryQuery(name, cloud).then(x => ({
+        name,
+        cloud,
+        value: x,
+      }));
+    });
+    const historyValues = await Promise.all(historyPromises);
+    this.versionHistory = historyValues.reduce((acc, val) => {
+      acc[`${val.name}-${val.cloud}`] = val.value;
+      return acc;
+    }, {});
   }
 
-  async getLocations(): Promise<FusionLocation[]> {
+  async getVersionHistoryQuery(
+    name: string,
+    cloud: string,
+  ): Promise<FusionVersion[]> {
+    const items = await this.connection.manager.find(FusionVersion, {
+      where: { name, cloud },
+      order: { createdAt: 'DESC' },
+      take: 20,
+      cache: true,
+    });
+    return items;
+  }
+  async getLatestVersionQuery(
+    name: string,
+    cloud: string,
+  ): Promise<FusionVersion> {
+    const item = await this.connection.manager.find(FusionVersion, {
+      where: { name, cloud },
+      order: { createdAt: 'DESC' },
+      take: 1,
+      cache: true,
+    });
+    return item.length > 0 ? item[0] : null;
+  }
+  async getLocationsQuery(): Promise<FusionLocation[]> {
     const c = await this.connection.manager
       .getRepository(FusionVersion)
       .createQueryBuilder('version')
@@ -30,29 +89,14 @@ export class FusionVersionService {
     }));
   }
 
-  async getLatestVersion(name: string, cloud: string): Promise<FusionVersion> {
-    const item = await this.connection.manager.find(FusionVersion, {
-      where: { name, cloud },
-      order: { createdAt: 'DESC' },
-      take: 1,
-      cache: true,
-    });
-    return item.length > 0 ? item[0] : null;
+  getLocations(): FusionLocation[] {
+    return this.locations;
   }
 
-  async getVersionHistory(
-    name: string,
-    cloud: string,
-    take = 5,
-    skip = +0,
-  ): Promise<FusionVersion[]> {
-    const items = await this.connection.manager.find(FusionVersion, {
-      where: { name, cloud },
-      order: { createdAt: 'DESC' },
-      skip,
-      take,
-      cache: true,
-    });
-    return items;
+  getLatestVersion(name: string, cloud: string): FusionVersion {
+    return this.latestVersion && this.latestVersion[`${name}-${cloud}`];
+  }
+  getVersionHistory(name: string, cloud: string): FusionVersion[] {
+    return this.versionHistory && this.versionHistory[`${name}-${cloud}`];
   }
 }
