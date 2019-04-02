@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { IbizaVersionsModule } from './ibiza-versions/ibiza-versions.module';
 import { GraphQLDate, GraphQLTime, GraphQLDateTime } from 'graphql-iso-date';
 import { RedisCache } from 'apollo-server-cache-redis';
+
 @Module({
   imports: [
     FusionVersionModule,
