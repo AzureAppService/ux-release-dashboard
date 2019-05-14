@@ -13,6 +13,8 @@ const fusionLocations = [
   'france',
   'india',
   'brazil',
+  'africa',
+  'jp-west',
   'australia',
   'db3-staging',
   'hk1-staging',
@@ -22,6 +24,8 @@ const fusionLocations = [
   'india-staging',
   'brazil-staging',
   'australia-staging',
+  'africa-staging',
+  'jp-west-staging',
 ];
 const functionObjs = fusionLocations.map(loc => ({
   name: loc,
