@@ -216,6 +216,7 @@ export async function run(context: any, req: any) {
     });
     await Promise.all(promises);
   } catch (err) {
+    console.log(err);
   } finally {
     connection.close();
   }
