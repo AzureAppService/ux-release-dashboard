@@ -1,9 +1,9 @@
 import React from 'react';
-import { Menu, Container } from 'semantic-ui-react';
+import { Menu } from 'semantic-ui-react';
 import { Link } from '@reach/router';
 import { ReactComponent as Logo } from '../AzureAppService.svg';
 
-const NavBar = props => {
+const NavBar = () => {
   return (
     <Menu fixed="top" inverted>
         <Menu.Item as={Link} to="#" link header>

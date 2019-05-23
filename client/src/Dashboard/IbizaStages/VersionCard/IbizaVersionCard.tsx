@@ -25,8 +25,6 @@ const IbizaProdToRegion: { [key: string]: { [key: string]: string } } = {
   },
 };
 
-const IbizaProdStages = ['stage1', 'stage2', 'stage3', 'stage4', 'stage5'];
-
 const IbizaVersionCard: FC<Props> = props => {
   const { header, items } = props;
   const onHistoryClick = (location: string, cloud: string) => {
